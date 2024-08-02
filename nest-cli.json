@@ -54,6 +54,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/notifications/tsconfig.app.json"
       }
+    },
+    "projects": {
+      "type": "application",
+      "root": "apps/projects",
+      "entryFile": "main",
+      "sourceRoot": "apps/projects/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/projects/tsconfig.app.json"
+      }
     }
   }
 }
