@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { ServiceInterface } from '../adapters';
-
+import { ServiceInterface } from '@app/common/domain/adapters';
 export class HttpResponse {
   static send<T = any>(message: string, data: ServiceInterface<T>) {
     return {
