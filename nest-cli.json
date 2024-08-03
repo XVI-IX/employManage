@@ -1,0 +1,29 @@
+{
+  "monorepo": true,
+  "root": "apps/employManage",
+  "sourceRoot": "apps/employManage/src",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/employManage/tsconfig.app.json"
+  },
+  "projects": {
+    "employManage": {
+      "type": "application",
+      "root": "apps/employManage",
+      "entryFile": "main",
+      "sourceRoot": "apps/employManage/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/employManage/tsconfig.app.json"
+      }
+    },
+    "attendance": {
+      "type": "application",
+      "root": "apps/attendance",
+      "entryFile": "main",
+      "sourceRoot": "apps/attendance/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/attendance/tsconfig.app.json"
+      }
+    }
+  }
+}
