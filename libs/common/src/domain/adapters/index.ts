@@ -5,3 +5,4 @@ export * from './paginate.interface';
 export * from './query.interface';
 export * from './response.interface';
 export * from './database.interface';
+export * from './database.query.builder.interface';
