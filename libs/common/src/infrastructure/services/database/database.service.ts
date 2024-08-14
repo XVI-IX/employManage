@@ -1,6 +1,6 @@
 import { IDatabseService } from '@app/common/domain/adapters';
 import { Injectable, Logger } from '@nestjs/common';
-import { Connection, createConnection } from 'mysql2/promise';
+import { Connection, createPool } from 'mysql2/promise';
 
 @Injectable()
 export class DatabaseService implements IDatabseService {
@@ -11,14 +11,16 @@ export class DatabaseService implements IDatabseService {
     this.connect();
   }
 
-  private async connect() {
+  async connect() {
     try {
-      this.connection = await createConnection({
+      const pool = createPool({
         host: 'localhost',
         user: 'test',
         password: 'test',
         database: 'employmanage',
       });
+
+      this.connection = await pool.getConnection();
 
       this.logger.log('Connected to MYSQL database');
     } catch (error) {
