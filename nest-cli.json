@@ -1,21 +1,12 @@
 {
   "monorepo": true,
-  "root": "apps/employManage",
-  "sourceRoot": "apps/employManage/src",
+  "root": "apps/gateway",
+  "sourceRoot": "apps/gateway/src",
   "compilerOptions": {
     "webpack": true,
-    "tsConfigPath": "apps/employManage/tsconfig.app.json"
+    "tsConfigPath": "apps/gateway/tsconfig.app.json"
   },
   "projects": {
-    "employManage": {
-      "type": "application",
-      "root": "apps/employManage",
-      "entryFile": "main",
-      "sourceRoot": "apps/employManage/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/employManage/tsconfig.app.json"
-      }
-    },
     "attendance": {
       "type": "application",
       "root": "apps/attendance",
@@ -23,6 +14,68 @@
       "sourceRoot": "apps/attendance/src",
       "compilerOptions": {
         "tsConfigPath": "apps/attendance/tsconfig.app.json"
+      }
+    },
+    "auth": {
+      "type": "application",
+      "root": "apps/auth",
+      "entryFile": "main",
+      "sourceRoot": "apps/auth/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/auth/tsconfig.app.json"
+      }
+    },
+    "gateway": {
+      "type": "application",
+      "root": "apps/gateway",
+      "entryFile": "main",
+      "sourceRoot": "apps/gateway/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/gateway/tsconfig.app.json"
+      }
+    },
+    "notifications": {
+      "type": "application",
+      "root": "apps/notifications",
+      "entryFile": "main",
+      "sourceRoot": "apps/notifications/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/notifications/tsconfig.app.json"
+      }
+    },
+    "employees": {
+      "type": "application",
+      "root": "apps/employees",
+      "entryFile": "main",
+      "sourceRoot": "apps/employees/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/employees/tsconfig.app.json"
+      }
+    },
+    "projects": {
+      "type": "application",
+      "root": "apps/projects",
+      "entryFile": "main",
+      "sourceRoot": "apps/projects/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/projects/tsconfig.app.json"
+      }
+    },
+    "common": {
+      "type": "library",
+      "root": "libs/common",
+      "sourceRoot": "libs/common/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/common/tsconfig.lib.json"
+      }
+    },
+    "departments": {
+      "type": "application",
+      "root": "apps/departments",
+      "entryFile": "main",
+      "sourceRoot": "apps/departments/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/departments/tsconfig.app.json"
       }
     }
   }
