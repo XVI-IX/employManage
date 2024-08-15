@@ -77,4 +77,40 @@ export interface IQueryBuilder<T> {
   where(
     conditions: PartialCondition<T> | PartialCondition<T>[],
   ): IQueryBuilder<T>;
+
+  /**
+   * @name orderBy
+   * @param field field to order the query results by
+   * @param direction ASC | DESC
+   */
+  orderBy(field: keyof T, direction?: OrderDirection): IQueryBuilder<T>;
+
+  /**
+   * @name limit
+   * @param limit number of records to be returned in query result
+   */
+  limit(limit: number): IQueryBuilder<T>;
+
+  /**
+   * @name offset
+   * @param offset number of records to skip
+   */
+  offset(offset: number): IQueryBuilder<T>;
+
+  /**
+   * @name update
+   * @param values values to update
+   */
+  update(values: Partial<T>): IQueryBuilder<T>;
+
+  /**
+   * @name Deletes a record
+   */
+  delete(): IQueryBuilder<T>;
+
+  /**
+   * @name build
+   * @description builds the query
+   */
+  build(): string;
 }
