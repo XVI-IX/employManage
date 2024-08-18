@@ -1,4 +1,8 @@
-import { IQueryBuilder, PartialCondition } from '@app/common/domain/adapters';
+import {
+  IQueryBuilder,
+  OrderDirection,
+  PartialCondition,
+} from '@app/common/domain/adapters';
 
 export function ILike<T>(
   field: keyof T,
@@ -163,6 +167,86 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
       this.whereClause = `WHERE (${this.formatCondition(conditions)})`;
     }
     return this;
+  }
+
+  andWhere(conditions: PartialCondition<T>): QueryBuilder<T> {
+    if (this.whereClause === '') {
+      this.whereClause = `WHERE (${this.formatCondition(conditions)})`;
+    } else {
+      this.whereClause += `AND (${this.formatCondition(conditions)})`;
+    }
+
+    return this;
+  }
+
+  orWhere(conditions: PartialCondition<T>[]): QueryBuilder<T> {
+    if (this.whereClause === '') {
+      this.whereClause = `WHERE (${conditions.map(this.formatCondition).join(' OR')})`;
+    } else {
+      this.whereClause += `OR (${conditions.map(this.formatCondition).join(' OR')})`;
+    }
+
+    return this;
+  }
+
+  orderBy(field: keyof T, direction?: OrderDirection): QueryBuilder<T> {
+    if (!field) {
+      return this;
+    }
+
+    if (this.orderByClause === '') {
+      this.orderByClause = `ORDER BY ${String(field)} ${direction || 'ASC'}`;
+    } else {
+      this.orderByClause += `, ${String(field)} ${direction || 'ASC'}`;
+    }
+
+    return this;
+  }
+
+  limit(limit: number): QueryBuilder<T> {
+    this.limitClause = `LIMIT ${limit ? limit : 50}`;
+    return this;
+  }
+
+  offset(offset: number): QueryBuilder<T> {
+    this.offsetClause = `OFFSET ${offset ? offset : 0}`;
+    return this;
+  }
+
+  update(values: Partial<T>): QueryBuilder<T> {
+    this.operation = 'UPDATE';
+    this.updateValues = values;
+    return this;
+  }
+
+  delete(): QueryBuilder<T> {
+    this.operation = 'DELETE';
+    return this;
+  }
+
+  build(): string {
+    switch (this.operation) {
+      case 'SELECT':
+        const selectClause =
+          this.selectColums.length > 0
+            ? `SELECT ${this.selectColums.join(', ')}`
+            : 'SELECT *';
+        return `${selectClause}${this.fromClause}${this.whereClause}${this.orderByClause}${this.limitClause}${this.offsetClause};`;
+      case 'UPDATE':
+        const updateClause = `UPDATE ${this.fromClause} SET ${Object.keys(
+          this.updateValues,
+        )
+          .map(
+            (field) =>
+              `${String(field)} = ${typeof this.updateValues[field] === 'string' ? `"${this.updateValues[field]}"` : this.updateValues[field]}`,
+          )
+          .join(', ')}`;
+        return `${updateClause}${this.whereClause};`;
+      case 'DELETE':
+        return `DELETE ${this.fromClause}${this.whereClause};`;
+      default:
+        throw new Error('Invalid operation');
+    }
   }
 
   private formatCondition(
