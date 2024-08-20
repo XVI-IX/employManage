@@ -11,5 +11,5 @@ export class EmployeeModel {
   role: string;
   jobTitle: string;
   createdAt: Date;
-  updateAt: Date;
+  updatedAt: Date;
 }

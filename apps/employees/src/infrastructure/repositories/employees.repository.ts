@@ -18,12 +18,41 @@ export class EmployeeRepository implements IEmployeeRepository {
   async getEmployeeByEmail(email: string): Promise<EmployeeModel | null> {
     try {
       const query = `SELECT * FROM ${this.collectionName} WHERE ${ILike('email', email)}`;
-      const [response, _] = await this.connection.query(query);
+      const rows = await this.connection.query(query);
 
-      return response[0] as EmployeeModel;
+      return this.transformQueryResultToEmployeeModel(rows[0]);
     } catch (error) {
       this.logger.error('Error getting employee by email', error.stack);
       throw new BadRequestException('Error getting employee by email');
     }
+  }
+
+  /**
+   * @name transformQueryResultToEmployeeModel
+   * @private
+   * @param row
+   * @returns
+   */
+  private transformQueryResultToEmployeeModel(row: any): EmployeeModel {
+    return {
+      id: row.id,
+      email: row.email,
+      firstName: row.firstName,
+      lastName: row.lastName,
+      hireDate: row.hireDate,
+      avatarUrl: row.avatarUrl,
+      phone: row.phone,
+      departmentId: row.departmentId,
+      role: row.role,
+      jobTitle: row.jobTitle,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    };
+  }
+
+  private transformQueryResultToEmployeesModel(rows: any[]): EmployeeModel[] {
+    return rows.map((r) => {
+      return this.transformQueryResultToEmployeeModel(r.employees);
+    });
   }
 }
