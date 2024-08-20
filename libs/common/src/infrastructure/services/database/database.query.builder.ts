@@ -3,6 +3,7 @@ import {
   OrderDirection,
   PartialCondition,
 } from '@app/common/domain/adapters';
+import { BadRequestException } from '@nestjs/common';
 
 export function ILike<T>(
   field: keyof T,
@@ -111,7 +112,7 @@ export function LessThanOrEqual<T>(
 }
 
 export class QueryBuilder<T> implements IQueryBuilder<T> {
-  private operation: 'SELECT' | 'UPDATE' | 'DELETE' = 'SELECT';
+  private operation: 'SELECT' | 'UPDATE' | 'DELETE' | 'INSERT' = 'SELECT';
   private selectColums: (keyof T | string)[];
   private fromClause: string;
   private whereClause: string;
@@ -119,6 +120,7 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
   private limitClause: string;
   private offsetClause: string;
   private updateValues: Partial<T>;
+  private insertValues: Partial<T>[];
 
   constructor() {
     this.selectColums = [];
@@ -146,6 +148,18 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
   select(columns: (keyof T | string)[]): QueryBuilder<T> {
     this.operation = 'SELECT';
     this.selectColums = columns;
+    return this;
+  }
+
+  insert(values: Partial<T> | Partial<T>[]): IQueryBuilder<T> {
+    this.operation = 'INSERT';
+
+    if (Array.isArray(values)) {
+      this.insertValues = values;
+    } else {
+      this.insertValues = [values];
+    }
+
     return this;
   }
 
@@ -244,6 +258,22 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
         return `${updateClause}${this.whereClause};`;
       case 'DELETE':
         return `DELETE ${this.fromClause}${this.whereClause};`;
+      case 'INSERT':
+        if (!this.fromClause) {
+          throw new BadRequestException('Table name is required');
+        }
+        const columns = Object.keys(this.insertValues[0]).join(', ');
+        const values = this.insertValues
+          .map(
+            (valueObj) =>
+              `(${Object.values(valueObj)
+                .map((value) =>
+                  typeof value === 'string' ? `"${value}"` : value,
+                )
+                .join(', ')})`,
+          )
+          .join(', ');
+        return `INSERT INTO ${this.fromClause} (${columns}) VALUES ${values};`;
       default:
         throw new Error('Invalid operation');
     }
