@@ -4,6 +4,8 @@ import { DatabaseService } from '@app/common/infrastructure/services/database/da
 import { EmployeeModel } from '../../domain/model';
 import { ILike } from '@app/common/infrastructure/services/database';
 import { Connection } from 'mysql2/promise';
+import { QueryBuilder } from '@app/common/infrastructure/services/database/database.query.builder';
+import { IFindOneOptions, IFindOptions } from '@app/common/domain/adapters';
 
 @Injectable()
 export class EmployeeRepository implements IEmployeeRepository {
@@ -15,6 +17,13 @@ export class EmployeeRepository implements IEmployeeRepository {
     this.connection = this.databaseService.getConnection();
   }
 
+  /**
+   * @name getEmployeeByEmail
+   * @description get employee by email
+   *
+   * @param email email to query employees by
+   * @returns employee model
+   */
   async getEmployeeByEmail(email: string): Promise<EmployeeModel | null> {
     try {
       const query = `SELECT * FROM ${this.collectionName} WHERE ${ILike('email', email)}`;
@@ -25,6 +34,50 @@ export class EmployeeRepository implements IEmployeeRepository {
       this.logger.error('Error getting employee by email', error.stack);
       throw new BadRequestException('Error getting employee by email');
     }
+  }
+
+  async save(entity: Partial<EmployeeModel>): Promise<EmployeeModel> {
+    const builder = new QueryBuilder<EmployeeModel>()
+      .insert(entity)
+      .from(this.collectionName)
+      .build();
+    try {
+      const result = await this.connection.query(builder);
+
+      return this.transformQueryResultToEmployeeModel(result[0]);
+    } catch (error) {
+      this.logger.error('Error getting employee by email', error.stack);
+      throw new BadRequestException('Error saving employee data');
+    }
+  }
+
+  async findOne(
+    options: IFindOneOptions<EmployeeModel>,
+  ): Promise<EmployeeModel | null> {
+    const builder: string = new QueryBuilder<EmployeeModel>()
+      .findOne()
+      .from(this.collectionName)
+      .where(options.where)
+      .build();
+
+    try {
+      const result = await this.connection.query(builder);
+
+      return this.transformQueryResultToEmployeeModel(result[0]);
+    } catch (error) {
+      this.logger.error('Error getting employee', error.stack);
+      throw error;
+    }
+  }
+
+  async find(options: IFindOptions<EmployeeModel>): Promise<EmployeeModel[]> {
+    const builder = new QueryBuilder<EmployeeModel>()
+      .findAll()
+      .from(this.collectionName)
+      .where(options.where)
+      .build();
+    try {
+    } catch (error) {}
   }
 
   /**
