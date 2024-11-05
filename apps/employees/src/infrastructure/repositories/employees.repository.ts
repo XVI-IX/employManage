@@ -5,7 +5,13 @@ import { EmployeeModel } from '../../domain/model';
 import { ILike } from '@app/common/infrastructure/services/database';
 import { Connection } from 'mysql2/promise';
 import { QueryBuilder } from '@app/common/infrastructure/services/database/database.query.builder';
-import { IFindOneOptions, IFindOptions } from '@app/common/domain/adapters';
+import {
+  IFindOneOptions,
+  IFindOptions,
+  IPaginateOptions,
+  IPaginateResult,
+} from '@app/common/domain/adapters';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class EmployeeRepository implements IEmployeeRepository {
@@ -36,14 +42,27 @@ export class EmployeeRepository implements IEmployeeRepository {
     }
   }
 
+  /**
+   * @name save
+   * @description save employee data
+   *
+   * @param entity object representing employee data
+   * @returns saved employee model
+   */
   async save(entity: Partial<EmployeeModel>): Promise<EmployeeModel> {
+    const userId = uuidv4();
+    const userDocument = {
+      ...entity,
+      id: userId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
     const builder = new QueryBuilder<EmployeeModel>()
-      .insert(entity)
       .from(this.collectionName)
+      .insert(userDocument)
       .build();
     try {
       const result = await this.connection.query(builder);
-
       return this.transformQueryResultToEmployeeModel(result[0]);
     } catch (error) {
       this.logger.error('Error getting employee by email', error.stack);
@@ -51,6 +70,13 @@ export class EmployeeRepository implements IEmployeeRepository {
     }
   }
 
+  /**
+   * @name findOne
+   * @description get employee by query options
+   *
+   * @param options options to query employee by
+   * @returns Employee retrieved by the query
+   */
   async findOne(
     options: IFindOneOptions<EmployeeModel>,
   ): Promise<EmployeeModel | null> {
@@ -70,6 +96,13 @@ export class EmployeeRepository implements IEmployeeRepository {
     }
   }
 
+  /**
+   * @name find
+   * @description get employees by query options
+   *
+   * @param options options to query employees by
+   * @returns Employee retrieved by the query
+   */
   async find(options: IFindOptions<EmployeeModel>): Promise<EmployeeModel[]> {
     const builder = new QueryBuilder<EmployeeModel>()
       .findAll()
@@ -77,7 +110,107 @@ export class EmployeeRepository implements IEmployeeRepository {
       .where(options.where)
       .build();
     try {
-    } catch (error) {}
+      const result = await this.connection.query(builder);
+
+      return this.transformQueryResultToEmployeesModel(result);
+    } catch (error) {
+      this.logger.error('Error getting employees', error.stack);
+      throw error;
+    }
+  }
+
+  /**
+   * @name update
+   * @description update employee data
+   *
+   * @param id unique identifier of the employee
+   * @param entity object representing employee data
+   * @returns updated employee object
+   */
+  async update(
+    id: string,
+    entity: Partial<EmployeeModel>,
+  ): Promise<EmployeeModel> {
+    const builder = new QueryBuilder<EmployeeModel>()
+      .from(this.collectionName)
+      .update(entity)
+      .where({ id })
+      .build();
+
+    try {
+      const existingUser = await this.connection.query(
+        new QueryBuilder<EmployeeModel>()
+          .findOne()
+          .from(this.collectionName)
+          .where({ id })
+          .build(),
+      );
+
+      if (!existingUser) {
+        throw new BadRequestException('Employee to be updated does not exist');
+      }
+
+      const result = await this.connection.query(builder);
+      return this.transformQueryResultToEmployeeModel(result[0]);
+    } catch (error) {
+      this.logger.error('Error updating employee', error.stack);
+      throw error;
+    }
+  }
+
+  /**
+   * @name paginate
+   * @description paginate employees
+   *
+   * @param options pagination options
+   * @param searchOptions filters to search db by
+   * @returns data matching the search options
+   */
+  async paginate(
+    options: IPaginateOptions,
+    searchOptions?: IFindOptions<EmployeeModel>,
+  ): Promise<IPaginateResult<EmployeeModel>> {
+    const { page, limit, sort } = options;
+    const builder = new QueryBuilder<EmployeeModel>()
+      .findAll()
+      .from(this.collectionName)
+      .where(searchOptions?.where)
+      .orderBy(sort as keyof EmployeeModel)
+      .limit(limit)
+      .offset((page - 1) * limit)
+      .build();
+
+    try {
+      const result = await this.connection.query(builder);
+
+      return {
+        data: this.transformQueryResultToEmployeesModel(result),
+        limit,
+        itemCount: result.length,
+        itemsPerPage: limit,
+        currentPage: page,
+      };
+    } catch (error) {
+      this.logger.error('Error paginating employees', error.stack);
+      throw error;
+    }
+  }
+
+  async delete(id: string): Promise<string> {
+    const builder = new QueryBuilder<EmployeeModel>()
+      .from(this.collectionName)
+      .delete()
+      .where({ id })
+      .build();
+
+    try {
+      await this.connection.query(builder);
+
+      return 'Deleted';
+    } catch (error) {
+      this.logger.error('Error deleting employee', error.stack);
+      throw error;
+    }
   }
 
   /**
