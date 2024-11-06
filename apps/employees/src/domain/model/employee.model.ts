@@ -4,7 +4,7 @@ export class EmployeeModel {
   lastName: string;
   email: string;
   hireDate: Date;
-  avatarUrl: string;
+  avatarUrl?: string;
   password?: string;
   phone: string;
   departmentId?: string;
