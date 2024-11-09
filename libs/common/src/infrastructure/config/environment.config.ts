@@ -59,6 +59,22 @@ class EnvironmentConfig implements IEnvironmentInterface {
   getJWTSecret(): string {
     return env.get('JWT_SECRET').asString();
   }
+
+  getDatabase(): string {
+    return env.get('DATABASE_NAME').asString();
+  }
+
+  getDatabaseHost(): string {
+    return env.get('DATABASE_HOST').asString();
+  }
+
+  getDatabasePassword(): string {
+    return env.get('DATABASE_PASSWORD').asString();
+  }
+
+  getDatabaseUser(): string {
+    return env.get('DATABASE_USER').asString();
+  }
 }
 
 export const envConfig = new EnvironmentConfig();
