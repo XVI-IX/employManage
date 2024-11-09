@@ -1,4 +1,11 @@
-import { IsDate, IsString, IsUUID } from 'class-validator';
+import {
+  IsDate,
+  IsEmail,
+  IsOptional,
+  IsString,
+  IsUrl,
+  IsUUID,
+} from 'class-validator';
 
 export class Employee {
   @IsString()
@@ -28,4 +35,28 @@ export class Employee {
   createdAt: Date;
 
   updatedAt: Date;
+}
+
+export class UpdateEmployeeInput {
+  @IsString()
+  @IsOptional()
+  firstName: string;
+
+  @IsString()
+  @IsOptional()
+  lastName: string;
+
+  @IsString()
+  @IsOptional()
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  @IsOptional()
+  @IsUrl()
+  avatarUrl: string;
+
+  @IsString()
+  @IsOptional()
+  jobTitle: string;
 }
