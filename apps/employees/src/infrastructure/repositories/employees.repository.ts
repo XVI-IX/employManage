@@ -3,7 +3,6 @@ import { IEmployeeRepository } from '../../domain/repositories';
 import { DatabaseService } from '@app/common/infrastructure/services/database/database.service';
 import { EmployeeModel } from '../../domain/model';
 import { ILike } from '@app/common/infrastructure/services/database';
-import { Connection } from 'mysql2/promise';
 import { QueryBuilder } from '@app/common/infrastructure/services/database/database.query.builder';
 import {
   IFindOneOptions,
@@ -17,7 +16,7 @@ import { v4 as uuidv4 } from 'uuid';
 export class EmployeeRepository implements IEmployeeRepository {
   private logger: Logger;
   private collectionName = 'employees';
-  private connection: Connection;
+  private connection: any;
   constructor(private readonly databaseService: DatabaseService) {
     this.logger = new Logger(EmployeeRepository.name);
     this.connection = this.databaseService.getConnection();
