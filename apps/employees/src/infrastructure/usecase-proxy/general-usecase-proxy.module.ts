@@ -37,9 +37,9 @@ export class GeneralUseCaseProxyModule {
           inject: [EmployeeRepository, ArgonService, JwtTokenService],
           provide: GeneralUseCaseProxyModule.REGISTER_USE_CASE_PROXY,
           useFactory: (
-            jwtTokenService: JwtTokenService,
             employeeRepository: EmployeeRepository,
             argonService: ArgonService,
+            jwtTokenService: JwtTokenService,
           ) =>
             new UseCaseProxy(
               new RegisterEmployeeUseCase(

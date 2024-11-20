@@ -20,9 +20,6 @@ export class RegisterEmployeeUseCase {
    * @returns {IAuthToken} JWT token for authorization
    */
   async registerEmployee(input: RegisterEmployeeInput): Promise<IAuthToken> {
-    console.log(this.employeeRepository);
-    console.log(this.argonService);
-    console.log(this.jwtTokenService);
 
     const employee = await this.employeeRepository.getEmployeeByEmail(
       input.email,
