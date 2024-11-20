@@ -1,6 +1,6 @@
 import { LoggerService } from '@app/common/infrastructure/logger/logger.service';
 import { JwtTokenService } from '@app/common/infrastructure/services/jwt/jwt.service';
-import { Module } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { EmployeeRepository } from '../repositories/employees.repository';
 import { ArgonService } from '@app/common/infrastructure/services/argon/argon.service';
 import { UseCaseProxy } from '@app/common/infrastructure/usecase-proxy/usecase-proxy';
@@ -29,17 +29,12 @@ export class GeneralUseCaseProxyModule {
   static UPDATE_EMPLOYEE_USE_CASE_PROXY = 'UPDATE_EMPLOYEE_USE_CASE_PROXY';
   static TEST_EMPLOYEE_USE_CASE_PROXY = 'TEST_EMPLOYEE_USE_CASE_PROXY';
 
-  static register() {
+  static register(): DynamicModule {
     return {
       module: GeneralUseCaseProxyModule,
       providers: [
         {
-          inject: [
-            LoggerService,
-            JwtTokenService,
-            EmployeeRepository,
-            ArgonService,
-          ],
+          inject: [EmployeeRepository, ArgonService, JwtTokenService],
           provide: GeneralUseCaseProxyModule.REGISTER_USE_CASE_PROXY,
           useFactory: (
             jwtTokenService: JwtTokenService,

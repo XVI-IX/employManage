@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { GeneralUseCaseProxyModule } from './infrastructure/usecase-proxy/general-usecase-proxy.module';
 import { DatabaseModule } from '@app/common/infrastructure/services/database/database.module';
 import { EmployeesController } from './infrastructure/controllers/employees.controller';
+import { RepositoriesModule } from './infrastructure/repositories/repositories.module';
 
 @Module({
   imports: [
@@ -16,8 +17,9 @@ import { EmployeesController } from './infrastructure/controllers/employees.cont
     LoggerModule,
     ArgonModule,
     JwtTokenModule,
-    GeneralUseCaseProxyModule.register(),
     DatabaseModule,
+    RepositoriesModule,
+    GeneralUseCaseProxyModule.register(),
   ],
   controllers: [EmployeesController],
   providers: [],
