@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import {
   LoginEmployeePasswordInput,
@@ -11,13 +11,19 @@ export class AuthEmployeeController {
     @Inject('EMPLOYEE_SERVICE') private readonly employeeService: ClientProxy,
   ) {}
 
-  @Post('login')
+  @Post('/login')
   async loginEmployee(@Body() body: LoginEmployeePasswordInput) {
     return this.employeeService.send('loginEmployee', body);
   }
 
-  @Post('register')
+  @Post('/register')
   async registerEmployee(@Body() body: RegisterEmployeeInput) {
     return this.employeeService.send('registerEmployee', body);
+  }
+
+  @Get('/test')
+  test() {
+    console.log('Hit test');
+    return this.employeeService.send('test', {});
   }
 }

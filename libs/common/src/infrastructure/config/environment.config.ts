@@ -56,6 +56,10 @@ class EnvironmentConfig implements IEnvironmentInterface {
     return env.get('PORT').asInt() || 3000;
   }
 
+  getEmployeeServicePort(): number {
+    return env.get('EMPLOYEE_SERVICE_PORT').asInt() || 3001;
+  }
+
   getJWTSecret(): string {
     return env.get('JWT_SECRET').asString();
   }
@@ -74,6 +78,10 @@ class EnvironmentConfig implements IEnvironmentInterface {
 
   getDatabaseUser(): string {
     return env.get('DATABASE_USER').asString();
+  }
+
+  getDatabasePort(): number {
+    return env.get('DATABASE_PORT').asInt() || 3306;
   }
 }
 

@@ -17,6 +17,7 @@ export class DatabaseService implements IDatabseService {
       this.pool = createPool({
         host: envConfig.getDatabaseHost(),
         user: envConfig.getDatabaseUser(),
+        port: envConfig.getDatabasePort(),
         password: envConfig.getDatabasePassword(),
         database: envConfig.getDatabase(),
         connectionLimit: 10,

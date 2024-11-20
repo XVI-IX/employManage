@@ -18,6 +18,8 @@ export interface IEnvironmentInterface {
   getEarthRadius(): number;
   getDatabaseHost(): string;
   getDatabaseUser(): string;
+  getDatabasePort(): number;
   getDatabasePassword(): string;
   getDatabase(): string;
+  getEmployeeServicePort(): number;
 }

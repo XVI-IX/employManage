@@ -16,6 +16,38 @@ import { EmployeeAccountController } from './infrastructure/controllers/employee
           port: 3001,
         },
       },
+      {
+        name: 'DEPARTMENT_SERVICE',
+        transport: Transport.TCP,
+        options: {
+          host: 'localhost',
+          port: 3002,
+        },
+      },
+      {
+        name: 'NOTIFICATION_SERVICE',
+        transport: Transport.TCP,
+        options: {
+          host: 'localhost',
+          port: 3003,
+        },
+      },
+      {
+        name: 'ATTENDANCE_SERVICE',
+        transport: Transport.TCP,
+        options: {
+          host: 'localhost',
+          port: 3004,
+        },
+      },
+      {
+        name: 'PROJECT_SERVICE',
+        transport: Transport.TCP,
+        options: {
+          host: 'localhost',
+          port: 3005,
+        },
+      },
     ]),
   ],
   controllers: [AuthEmployeeController, EmployeeAccountController],

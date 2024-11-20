@@ -6,6 +6,7 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { GeneralUseCaseProxyModule } from './infrastructure/usecase-proxy/general-usecase-proxy.module';
 import { DatabaseModule } from '@app/common/infrastructure/services/database/database.module';
+import { EmployeesController } from './infrastructure/controllers/employees.controller';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { DatabaseModule } from '@app/common/infrastructure/services/database/dat
     GeneralUseCaseProxyModule.register(),
     DatabaseModule,
   ],
-  controllers: [],
+  controllers: [EmployeesController],
   providers: [],
 })
 export class AppModule {}
