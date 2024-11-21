@@ -11,15 +11,16 @@ import {
   IPaginateResult,
 } from '@app/common/domain/adapters';
 import { v4 as uuidv4 } from 'uuid';
+import { PoolConnection } from 'mysql2/promise';
 
 @Injectable()
 export class EmployeeRepository implements IEmployeeRepository {
   private logger: Logger;
   private collectionName = 'employees';
-  private connection: any;
+  private connection: Promise<PoolConnection>;
   constructor(private readonly databaseService: DatabaseService) {
     this.logger = new Logger(EmployeeRepository.name);
-    this.connection = this.databaseService.getConnection();
+    this.connection = this.databaseService.getConnection().then();
   }
 
   /**
@@ -32,7 +33,7 @@ export class EmployeeRepository implements IEmployeeRepository {
   async getEmployeeByEmail(email: string): Promise<EmployeeModel | null> {
     try {
       const query = `SELECT * FROM ${this.collectionName} WHERE ${ILike('email', email)}`;
-      const rows = await this.connection.query(query);
+      const rows = await (await this.connection).query(query);
 
       return this.transformQueryResultToEmployeeModel(rows[0]);
     } catch (error) {
@@ -61,7 +62,7 @@ export class EmployeeRepository implements IEmployeeRepository {
       .insert(userDocument)
       .build();
     try {
-      const result = await this.connection.query(builder);
+      const result = await (await this.connection).query(builder);
       return this.transformQueryResultToEmployeeModel(result[0]);
     } catch (error) {
       this.logger.error('Error getting employee by email', error.stack);
@@ -86,7 +87,7 @@ export class EmployeeRepository implements IEmployeeRepository {
       .build();
 
     try {
-      const result = await this.connection.query(builder);
+      const result = await (await this.connection).query(builder);
 
       return this.transformQueryResultToEmployeeModel(result[0]);
     } catch (error) {
@@ -109,7 +110,7 @@ export class EmployeeRepository implements IEmployeeRepository {
       .where(options.where)
       .build();
     try {
-      const result = await this.connection.query(builder);
+      const result = await (await this.connection).query(builder);
 
       return this.transformQueryResultToEmployeesModel(result);
     } catch (error) {
@@ -137,7 +138,9 @@ export class EmployeeRepository implements IEmployeeRepository {
       .build();
 
     try {
-      const existingUser = await this.connection.query(
+      const existingUser = await (
+        await this.connection
+      ).query(
         new QueryBuilder<EmployeeModel>()
           .findOne()
           .from(this.collectionName)
@@ -149,7 +152,7 @@ export class EmployeeRepository implements IEmployeeRepository {
         throw new BadRequestException('Employee to be updated does not exist');
       }
 
-      const result = await this.connection.query(builder);
+      const result = await (await this.connection).query(builder);
       return this.transformQueryResultToEmployeeModel(result[0]);
     } catch (error) {
       this.logger.error('Error updating employee', error.stack);
@@ -180,7 +183,7 @@ export class EmployeeRepository implements IEmployeeRepository {
       .build();
 
     try {
-      const result = await this.connection.query(builder);
+      const result = await (await this.connection).query(builder);
 
       return {
         data: this.transformQueryResultToEmployeesModel(result),
@@ -203,7 +206,7 @@ export class EmployeeRepository implements IEmployeeRepository {
       .build();
 
     try {
-      await this.connection.query(builder);
+      await (await this.connection).query(builder);
 
       return 'Deleted';
     } catch (error) {

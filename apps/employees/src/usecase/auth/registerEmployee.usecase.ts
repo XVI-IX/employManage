@@ -20,10 +20,11 @@ export class RegisterEmployeeUseCase {
    * @returns {IAuthToken} JWT token for authorization
    */
   async registerEmployee(input: RegisterEmployeeInput): Promise<IAuthToken> {
-
     const employee = await this.employeeRepository.getEmployeeByEmail(
       input.email,
     );
+
+    console.log('employee', employee);
 
     if (employee) {
       throw new ConflictException('Employee already exists');
