@@ -1,4 +1,4 @@
-CREATE TABLE Employee (
+CREATE TABLE Employees (
   id VARCHAR(36) DEFAULT (uuid()) PRIMARY KEY,
   firstName VARCHAR(255) NOT NULL,
   lastName VARCHAR(255) NOT NULL,
@@ -9,6 +9,9 @@ CREATE TABLE Employee (
   phone VARCHAR(15) NOT NULL,
   departmentId VARCHAR(36),
   role VARCHAR(50) NOT NULL DEFAULT 'employee',
+  resetPasswordToken VARCHAR(255),
+  resetPasswordExpires TIMESTAMP,
+  refreshToken VARCHAR(255),
   jobTitle VARCHAR(255) NOT NULL,
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

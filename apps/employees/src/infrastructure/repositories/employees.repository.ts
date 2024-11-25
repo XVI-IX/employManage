@@ -34,12 +34,9 @@ export class EmployeeRepository implements IEmployeeRepository {
   async getEmployeeByEmail(email: string): Promise<EmployeeModel | null> {
     try {
       const query = `SELECT * FROM ${this.collectionName} WHERE ${ILike('email', email)}`;
-      // const rows = await ;
       const rows = await this.databaseService.query(query);
 
-      console.log(Array(rows[0]).length);
-
-      if (rows && Array(rows[0]).length === 1) {
+      if (rows && rows.length === 0) {
         return null;
       }
 
@@ -240,6 +237,7 @@ export class EmployeeRepository implements IEmployeeRepository {
       lastName: row.lastName,
       hireDate: row.hireDate,
       avatarUrl: row.avatarUrl,
+      password: row.password,
       phone: row.phone,
       departmentId: row.departmentId,
       role: row.role,

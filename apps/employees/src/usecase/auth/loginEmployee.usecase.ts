@@ -1,4 +1,3 @@
-import { LoggerService } from '@app/common/infrastructure/logger/logger.service';
 import { IEmployeeRepository } from '../../domain/repositories';
 import { JwtTokenService } from '@app/common/infrastructure/services/jwt/jwt.service';
 import { IArgonService } from '@app/common/domain/adapters/argon.interface';
@@ -9,7 +8,6 @@ import { IAuthUser } from '@app/common/infrastructure/decorators';
 export class LoginUseCase {
   constructor(
     private readonly employeeRepository: IEmployeeRepository,
-    private readonly logger: LoggerService,
     private readonly jwtTokenService: JwtTokenService,
     private readonly argonService: IArgonService,
   ) {}
@@ -30,6 +28,7 @@ export class LoginUseCase {
         employee.password,
       );
 
+      console.log('match ', isValidPassword);
       if (!isValidPassword) {
         throw new BadRequestException('Invalid password provided');
       }
@@ -39,13 +38,14 @@ export class LoginUseCase {
         role: employee.role,
         email: employee.email,
       };
-      const token = await this.jwtTokenService.generateToken(tokenPayload);
+      const token = this.jwtTokenService.generateToken(tokenPayload);
+
+      console.log(token);
 
       return {
         token,
       };
     } catch (error) {
-      this.logger.error('Error logging in employee', error.stack);
       throw new BadRequestException('Error logging in employee');
     }
   }

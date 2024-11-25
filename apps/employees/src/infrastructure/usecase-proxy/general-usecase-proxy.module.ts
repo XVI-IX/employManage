@@ -1,4 +1,3 @@
-import { LoggerService } from '@app/common/infrastructure/logger/logger.service';
 import { JwtTokenService } from '@app/common/infrastructure/services/jwt/jwt.service';
 import { DynamicModule, Module } from '@nestjs/common';
 import { EmployeeRepository } from '../repositories/employees.repository';
@@ -14,6 +13,8 @@ import { GetAllEmployeesUseCase } from '../../usecase/account/getAllEmployees.us
 import { GetEmployeeUseCase } from '../../usecase/account/getEmployee.usecase';
 import { UpdateEmployeeUseCase } from '../../usecase/account/updateEmployee.usecase';
 import { TestEmployeeUseCase } from '../../usecase/account/testEmployee.usecase';
+import { TokenHelper } from '@app/common/infrastructure/helpers/token/token.helper';
+import { ForgotPasswordEmployeeUseCase } from '../../usecase/auth/forgotPasswordEmployee.usecase';
 
 @Module({
   imports: [LoggerModule, JwtTokenModule, RepositoriesModule, ArgonModule],
@@ -50,23 +51,16 @@ export class GeneralUseCaseProxyModule {
             ),
         },
         {
-          inject: [
-            LoggerService,
-            JwtTokenService,
-            EmployeeRepository,
-            ArgonService,
-          ],
+          inject: [EmployeeRepository, JwtTokenService, ArgonService],
           provide: GeneralUseCaseProxyModule.LOGIN_USE_CASE_PROXY,
           useFactory: (
             employeeRepository: EmployeeRepository,
-            loggerService: LoggerService,
             jwtTokenService: JwtTokenService,
             argonService: ArgonService,
           ) =>
             new UseCaseProxy(
               new LoginUseCase(
                 employeeRepository,
-                loggerService,
                 jwtTokenService,
                 argonService,
               ),
@@ -95,6 +89,21 @@ export class GeneralUseCaseProxyModule {
           provide: GeneralUseCaseProxyModule.TEST_EMPLOYEE_USE_CASE_PROXY,
           useFactory: () => new UseCaseProxy(new TestEmployeeUseCase()),
         },
+        {
+          inject: [EmployeeRepository, TokenHelper],
+          provide: GeneralUseCaseProxyModule.FORGOT_PASSWORD_USE_CASE_PROXY,
+          useFactory: (
+            employeeRepository: EmployeeRepository,
+            tokenHelper: TokenHelper,
+          ) => {
+            new UseCaseProxy(
+              new ForgotPasswordEmployeeUseCase(
+                employeeRepository,
+                tokenHelper,
+              ),
+            );
+          },
+        },
       ],
       exports: [
         GeneralUseCaseProxyModule.REGISTER_USE_CASE_PROXY,
@@ -102,7 +111,7 @@ export class GeneralUseCaseProxyModule {
         GeneralUseCaseProxyModule.GET_ALL_EMPLOYEES_USE_CASE_PROXY,
         GeneralUseCaseProxyModule.GET_EMPLOYEE_BY_ID_USE_CASE_PROXY,
         GeneralUseCaseProxyModule.UPDATE_EMPLOYEE_USE_CASE_PROXY,
-        // GeneralUseCaseProxyModule.FORGOT_PASSWORD_USE_CASE_PROXY,
+        GeneralUseCaseProxyModule.FORGOT_PASSWORD_USE_CASE_PROXY,
         // GeneralUseCaseProxyModule.RESET_PASSWORD_USE_CASE_PROXY,
         GeneralUseCaseProxyModule.TEST_EMPLOYEE_USE_CASE_PROXY,
       ],

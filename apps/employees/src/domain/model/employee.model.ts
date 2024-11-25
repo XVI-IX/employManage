@@ -8,6 +8,9 @@ export class EmployeeModel {
   password?: string;
   phone: string;
   departmentId?: string;
+  resetPasswordToken?: string;
+  refreshToken?: string;
+  refreshTokenExpires?: Date | string;
   role: string;
   jobTitle: string;
   createdAt: Date | string;
