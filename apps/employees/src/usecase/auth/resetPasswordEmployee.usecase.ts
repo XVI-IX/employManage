@@ -1,0 +1,38 @@
+import { IArgonService } from 'apps/auth/src/domain/adapters';
+import { IEmployeeRepository } from '../../domain/repositories';
+import { BadRequestException } from '@nestjs/common';
+
+export class ResetPasswordEmployeeUseCase {
+  constructor(
+    private readonly employeeRepository: IEmployeeRepository,
+    private readonly argonService: IArgonService,
+  ) {}
+
+  async resetPassword(token: string, newPassword: string) {
+    const employee = await this.employeeRepository.findOne({
+      where: {
+        resetPasswordToken: token,
+      },
+    });
+
+    if (!employee) {
+      throw new BadRequestException('Invalid token');
+    }
+
+    if (employee.refreshTokenExpires < new Date()) {
+      throw new BadRequestException('Token expired');
+    }
+
+    const hashedPassword = await this.argonService.hash(newPassword);
+
+    await this.employeeRepository.update(employee.id, {
+      password: hashedPassword,
+      resetPasswordToken: null,
+      refreshTokenExpires: null,
+    });
+
+    return {
+      message: 'Password reset successfully',
+    };
+  }
+}

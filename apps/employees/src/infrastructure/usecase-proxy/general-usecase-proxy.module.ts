@@ -15,9 +15,17 @@ import { UpdateEmployeeUseCase } from '../../usecase/account/updateEmployee.usec
 import { TestEmployeeUseCase } from '../../usecase/account/testEmployee.usecase';
 import { TokenHelper } from '@app/common/infrastructure/helpers/token/token.helper';
 import { ForgotPasswordEmployeeUseCase } from '../../usecase/auth/forgotPasswordEmployee.usecase';
+import { HelperModule } from '@app/common/infrastructure/helpers/helper.module';
+import { ResetPasswordEmployeeUseCase } from '../../usecase/auth/resetPasswordEmployee.usecase';
 
 @Module({
-  imports: [LoggerModule, JwtTokenModule, RepositoriesModule, ArgonModule],
+  imports: [
+    LoggerModule,
+    JwtTokenModule,
+    RepositoriesModule,
+    ArgonModule,
+    HelperModule,
+  ],
 })
 export class GeneralUseCaseProxyModule {
   static REGISTER_USE_CASE_PROXY = 'REGISTER_USE_CASE_PROXY';
@@ -104,6 +112,21 @@ export class GeneralUseCaseProxyModule {
             );
           },
         },
+        {
+          inject: [EmployeeRepository, ArgonService],
+          provide: GeneralUseCaseProxyModule.RESET_PASSWORD_USE_CASE_PROXY,
+          useFactory: (
+            employeeRepository: EmployeeRepository,
+            argonService: ArgonService,
+          ) => {
+            new UseCaseProxy(
+              new ResetPasswordEmployeeUseCase(
+                employeeRepository,
+                argonService,
+              ),
+            );
+          },
+        },
       ],
       exports: [
         GeneralUseCaseProxyModule.REGISTER_USE_CASE_PROXY,
@@ -112,7 +135,7 @@ export class GeneralUseCaseProxyModule {
         GeneralUseCaseProxyModule.GET_EMPLOYEE_BY_ID_USE_CASE_PROXY,
         GeneralUseCaseProxyModule.UPDATE_EMPLOYEE_USE_CASE_PROXY,
         GeneralUseCaseProxyModule.FORGOT_PASSWORD_USE_CASE_PROXY,
-        // GeneralUseCaseProxyModule.RESET_PASSWORD_USE_CASE_PROXY,
+        GeneralUseCaseProxyModule.RESET_PASSWORD_USE_CASE_PROXY,
         GeneralUseCaseProxyModule.TEST_EMPLOYEE_USE_CASE_PROXY,
       ],
     };
