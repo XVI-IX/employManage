@@ -9,6 +9,7 @@ import { UseCaseProxy } from '@app/common/infrastructure/usecase-proxy/usecase-p
 import { LoginUseCase } from '../../usecase/auth/loginEmployee.usecase';
 import { TestEmployeeUseCase } from '../../usecase/account/testEmployee.usecase';
 import { RegisterEmployeeUseCase } from '../../usecase/auth/registerEmployee.usecase';
+import { GetAllEmployeesUseCase } from '../../usecase/account/getAllEmployees.usecase';
 
 @Controller()
 export class EmployeesController {
@@ -19,6 +20,8 @@ export class EmployeesController {
     private readonly registerUseCaseProxy: UseCaseProxy<RegisterEmployeeUseCase>,
     @Inject(GeneralUseCaseProxyModule.TEST_EMPLOYEE_USE_CASE_PROXY)
     private readonly testEmployeeUseCaseProxy: UseCaseProxy<TestEmployeeUseCase>,
+    @Inject(GeneralUseCaseProxyModule.GET_ALL_EMPLOYEES_USE_CASE_PROXY)
+    private readonly getAllEmployeesUseCaseProxy: UseCaseProxy<GetAllEmployeesUseCase>,
   ) {}
 
   @MessagePattern('test')
@@ -37,5 +40,12 @@ export class EmployeesController {
   @MessagePattern('registerEmployee')
   async registerEmployee(@Payload() data: RegisterEmployeeInput) {
     return await this.registerUseCaseProxy.getInstance().registerEmployee(data);
+  }
+
+  @MessagePattern('getAllEmployees')
+  async getAllEmployees() {
+    return await this.getAllEmployeesUseCaseProxy
+      .getInstance()
+      .getAllEmployees();
   }
 }

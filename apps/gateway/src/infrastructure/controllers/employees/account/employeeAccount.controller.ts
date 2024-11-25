@@ -2,13 +2,13 @@ import { Body, Controller, Get, Inject, Put, Query } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { UpdateEmployeeInput } from 'apps/employees/src/infrastructure/common/schemas/account.schema';
 
-@Controller('api/v1/employee/account')
+@Controller('/api/v1/employee/account')
 export class EmployeeAccountController {
   constructor(
     @Inject('EMPLOYEE_SERVICE') private readonly employeeService: ClientProxy,
   ) {}
 
-  @Get()
+  @Get('/')
   async getAllEmployees() {
     return this.employeeService.send('getAllEmployees', {});
   }

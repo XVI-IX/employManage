@@ -118,7 +118,9 @@ export class EmployeeRepository implements IEmployeeRepository {
       .where(options.where)
       .build();
     try {
-      const result = await (await this.connection).query(builder);
+      const result = await this.databaseService.query(builder);
+
+      console.log(result);
 
       return this.transformQueryResultToEmployeesModel(result);
     } catch (error) {
@@ -249,7 +251,8 @@ export class EmployeeRepository implements IEmployeeRepository {
 
   private transformQueryResultToEmployeesModel(rows: any[]): EmployeeModel[] {
     return rows.map((r) => {
-      return this.transformQueryResultToEmployeeModel(r.employees);
+      delete r.password;
+      return this.transformQueryResultToEmployeeModel(r);
     });
   }
 }
