@@ -25,16 +25,16 @@ export class Employee {
   avatarUrl: string;
 
   @IsDate()
-  hireDate: Date;
+  hireDate: Date | string;
 
   @IsString()
   phone: string;
 
   jobTitle: string;
 
-  createdAt: Date;
+  createdAt: Date | string;
 
-  updatedAt: Date;
+  updatedAt: Date | string;
 }
 
 export class UpdateEmployeeInput {

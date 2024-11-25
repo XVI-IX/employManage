@@ -114,6 +114,7 @@ export function LessThanOrEqual<T>(
 export class QueryBuilder<T> implements IQueryBuilder<T> {
   private operation: 'SELECT' | 'UPDATE' | 'DELETE' | 'INSERT' = 'SELECT';
   private selectColums: (keyof T | string)[];
+  private intoClause: string;
   private fromClause: string;
   private whereClause: string;
   private orderByClause: string;
@@ -124,6 +125,7 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
 
   constructor() {
     this.selectColums = [];
+    this.intoClause = '';
     this.fromClause = '';
     this.whereClause = '';
     this.orderByClause = '';
@@ -165,6 +167,11 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
 
   from(table: string): QueryBuilder<T> {
     this.fromClause = `FROM ${table}`;
+    return this;
+  }
+
+  into(table: string): QueryBuilder<T> {
+    this.intoClause = `${table}`;
     return this;
   }
 
@@ -259,7 +266,7 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
       case 'DELETE':
         return `DELETE ${this.fromClause}${this.whereClause};`;
       case 'INSERT':
-        if (!this.fromClause) {
+        if (!this.intoClause) {
           throw new BadRequestException('Table name is required');
         }
         const columns = Object.keys(this.insertValues[0]).join(', ');
@@ -273,7 +280,7 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
                 .join(', ')})`,
           )
           .join(', ');
-        return `INSERT INTO ${this.fromClause} (${columns}) VALUES ${values};`;
+        return `INSERT INTO ${this.intoClause} (${columns}) VALUES ${values};`;
       default:
         throw new Error('Invalid operation');
     }

@@ -24,8 +24,6 @@ export class RegisterEmployeeUseCase {
       input.email,
     );
 
-    console.log('employee', employee);
-
     if (employee) {
       throw new ConflictException('Employee already exists');
     }
@@ -39,6 +37,7 @@ export class RegisterEmployeeUseCase {
       avatarUrl: input.avatarUrl,
       phone: input.phone,
       hireDate: new Date(input.hireDate),
+      jobTitle: input.jobTitle,
     });
 
     const token = this.jwtTokenService.generateToken({

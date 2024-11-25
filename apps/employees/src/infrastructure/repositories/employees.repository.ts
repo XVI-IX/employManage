@@ -12,6 +12,7 @@ import {
 } from '@app/common/domain/adapters';
 import { v4 as uuidv4 } from 'uuid';
 import { PoolConnection } from 'mysql2/promise';
+import * as moment from 'moment';
 
 @Injectable()
 export class EmployeeRepository implements IEmployeeRepository {
@@ -33,7 +34,14 @@ export class EmployeeRepository implements IEmployeeRepository {
   async getEmployeeByEmail(email: string): Promise<EmployeeModel | null> {
     try {
       const query = `SELECT * FROM ${this.collectionName} WHERE ${ILike('email', email)}`;
-      const rows = await (await this.connection).query(query);
+      // const rows = await ;
+      const rows = await this.databaseService.query(query);
+
+      console.log(Array(rows[0]).length);
+
+      if (rows && Array(rows[0]).length === 1) {
+        return null;
+      }
 
       return this.transformQueryResultToEmployeeModel(rows[0]);
     } catch (error) {
@@ -51,16 +59,19 @@ export class EmployeeRepository implements IEmployeeRepository {
    */
   async save(entity: Partial<EmployeeModel>): Promise<EmployeeModel> {
     const userId = uuidv4();
+    entity.hireDate = moment(entity.hireDate).format('YYYY-MM-DD HH:mm:ss');
     const userDocument = {
       ...entity,
       id: userId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+      updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     };
     const builder = new QueryBuilder<EmployeeModel>()
-      .from(this.collectionName)
+      .into(this.collectionName)
       .insert(userDocument)
       .build();
+
+    console.log(builder);
     try {
       const result = await (await this.connection).query(builder);
       return this.transformQueryResultToEmployeeModel(result[0]);

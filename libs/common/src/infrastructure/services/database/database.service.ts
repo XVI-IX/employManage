@@ -1,6 +1,6 @@
 import { IDatabseService } from '@app/common/domain/adapters';
 import { Injectable, Logger } from '@nestjs/common';
-import { createPool, Pool, PoolConnection } from 'mysql2/promise';
+import { createPool, Pool, PoolConnection, QueryResult } from 'mysql2/promise';
 import { envConfig } from '../../config/environment.config';
 
 @Injectable()
@@ -31,5 +31,19 @@ export class DatabaseService implements IDatabseService {
 
   async getConnection(): Promise<PoolConnection> {
     return await this.pool.getConnection();
+  }
+
+  /**
+   * @name query
+   * @description execute query
+   *
+   * @param queryString stirng representing query to execute
+   * @returns results of query
+   */
+  async query(queryString: string): Promise<QueryResult> {
+    const conn = await this.getConnection();
+    const result = await conn.query(queryString);
+
+    return result[0];
   }
 }

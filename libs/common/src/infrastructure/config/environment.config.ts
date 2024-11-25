@@ -33,7 +33,7 @@ class EnvironmentConfig implements IEnvironmentInterface {
     throw new Error('Method not implemented.');
   }
   getJwtExpiration(): string {
-    throw new Error('Method not implemented.');
+    return env.get('JWT_EXPIRATION').asString();
   }
   getPaginationLimit(): number {
     throw new Error('Method not implemented.');
