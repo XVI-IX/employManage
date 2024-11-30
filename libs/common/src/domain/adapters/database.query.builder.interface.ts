@@ -63,6 +63,13 @@ export interface IQueryBuilder<T> {
   select(columns: (keyof T | string)[]): IQueryBuilder<T>;
 
   /**
+   * @name insert
+   * @description inserts a record
+   * @param values values to insert
+   */
+  insert(values: Partial<T> | Partial<T>[]): IQueryBuilder<T>;
+
+  /**
    * @name from
    * @description sets the table/collection to query
    * @param table

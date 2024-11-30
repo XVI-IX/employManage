@@ -3,13 +3,16 @@ export class EmployeeModel {
   firstName: string;
   lastName: string;
   email: string;
-  hireDate: Date;
-  avatarUrl: string;
+  hireDate: Date | string;
+  avatarUrl?: string;
   password?: string;
   phone: string;
   departmentId?: string;
+  resetPasswordToken?: string;
+  refreshToken?: string;
+  resetPasswordExpires?: Date | string;
   role: string;
   jobTitle: string;
-  createdAt: Date;
-  updateAt: Date;
+  createdAt: Date | string;
+  updatedAt: Date | string;
 }

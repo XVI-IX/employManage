@@ -33,7 +33,7 @@ class EnvironmentConfig implements IEnvironmentInterface {
     throw new Error('Method not implemented.');
   }
   getJwtExpiration(): string {
-    throw new Error('Method not implemented.');
+    return env.get('JWT_EXPIRATION').asString();
   }
   getPaginationLimit(): number {
     throw new Error('Method not implemented.');
@@ -56,8 +56,32 @@ class EnvironmentConfig implements IEnvironmentInterface {
     return env.get('PORT').asInt() || 3000;
   }
 
+  getEmployeeServicePort(): number {
+    return env.get('EMPLOYEE_SERVICE_PORT').asInt() || 3001;
+  }
+
   getJWTSecret(): string {
     return env.get('JWT_SECRET').asString();
+  }
+
+  getDatabase(): string {
+    return env.get('DATABASE_NAME').asString();
+  }
+
+  getDatabaseHost(): string {
+    return env.get('DATABASE_HOST').asString();
+  }
+
+  getDatabasePassword(): string {
+    return env.get('DATABASE_PASSWORD').asString();
+  }
+
+  getDatabaseUser(): string {
+    return env.get('DATABASE_USER').asString();
+  }
+
+  getDatabasePort(): number {
+    return env.get('DATABASE_PORT').asInt() || 3306;
   }
 }
 

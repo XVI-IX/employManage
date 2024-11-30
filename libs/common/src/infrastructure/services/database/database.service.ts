@@ -1,10 +1,11 @@
 import { IDatabseService } from '@app/common/domain/adapters';
 import { Injectable, Logger } from '@nestjs/common';
-import { Connection, createPool } from 'mysql2/promise';
+import { createPool, Pool, PoolConnection } from 'mysql2/promise';
+import { envConfig } from '../../config/environment.config';
 
 @Injectable()
 export class DatabaseService implements IDatabseService {
-  private connection: Connection;
+  private pool: Pool;
   private readonly logger = new Logger(DatabaseService.name);
 
   constructor() {
@@ -13,14 +14,14 @@ export class DatabaseService implements IDatabseService {
 
   async connect() {
     try {
-      const pool = createPool({
-        host: 'localhost',
-        user: 'test',
-        password: 'test',
-        database: 'employmanage',
+      this.pool = createPool({
+        host: envConfig.getDatabaseHost(),
+        user: envConfig.getDatabaseUser(),
+        port: envConfig.getDatabasePort(),
+        password: envConfig.getDatabasePassword(),
+        database: envConfig.getDatabase(),
+        connectionLimit: 10,
       });
-
-      this.connection = await pool.getConnection();
 
       this.logger.log('Connected to MYSQL database');
     } catch (error) {
@@ -28,7 +29,19 @@ export class DatabaseService implements IDatabseService {
     }
   }
 
-  getConnection(): Connection {
-    return this.connection;
+  async getConnection(): Promise<PoolConnection> {
+    return await this.pool.getConnection();
+  }
+
+  /**
+   * @name query
+   * @description execute query
+   *
+   * @param queryString stirng representing query to execute
+   * @returns results of query
+   */
+  async query(queryString: string): Promise<any> {
+    const [result, _] = await this.pool.execute(queryString);
+    return result;
   }
 }

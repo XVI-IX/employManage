@@ -13,7 +13,7 @@ export interface IBaseRepository<T> {
   findOne?(query: IFindOneOptions<T>): Promise<T>;
 
   paginate?(
-    option: IPaginateOptions,
+    options: IPaginateOptions,
     searchOptions?: IFindOptions<T>,
   ): Promise<IPaginateResult<T>>;
 

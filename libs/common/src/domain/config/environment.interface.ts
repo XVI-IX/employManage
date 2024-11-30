@@ -16,4 +16,10 @@ export interface IEnvironmentInterface {
   getOpensourceMapsKey(): string;
   getOpenRouteUrl(): string;
   getEarthRadius(): number;
+  getDatabaseHost(): string;
+  getDatabaseUser(): string;
+  getDatabasePort(): number;
+  getDatabasePassword(): string;
+  getDatabase(): string;
+  getEmployeeServicePort(): number;
 }

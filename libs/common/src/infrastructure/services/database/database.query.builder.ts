@@ -3,6 +3,7 @@ import {
   OrderDirection,
   PartialCondition,
 } from '@app/common/domain/adapters';
+import { BadRequestException } from '@nestjs/common';
 
 export function ILike<T>(
   field: keyof T,
@@ -111,17 +112,20 @@ export function LessThanOrEqual<T>(
 }
 
 export class QueryBuilder<T> implements IQueryBuilder<T> {
-  private operation: 'SELECT' | 'UPDATE' | 'DELETE' = 'SELECT';
+  private operation: 'SELECT' | 'UPDATE' | 'DELETE' | 'INSERT' = 'SELECT';
   private selectColums: (keyof T | string)[];
+  private intoClause: string;
   private fromClause: string;
   private whereClause: string;
   private orderByClause: string;
   private limitClause: string;
   private offsetClause: string;
   private updateValues: Partial<T>;
+  private insertValues: Partial<T>[];
 
   constructor() {
     this.selectColums = [];
+    this.intoClause = '';
     this.fromClause = '';
     this.whereClause = '';
     this.orderByClause = '';
@@ -149,8 +153,25 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
     return this;
   }
 
+  insert(values: Partial<T> | Partial<T>[]): IQueryBuilder<T> {
+    this.operation = 'INSERT';
+
+    if (Array.isArray(values)) {
+      this.insertValues = values;
+    } else {
+      this.insertValues = [values];
+    }
+
+    return this;
+  }
+
   from(table: string): QueryBuilder<T> {
-    this.fromClause = `FROM ${table}`;
+    this.fromClause = ` FROM ${table}`;
+    return this;
+  }
+
+  into(table: string): QueryBuilder<T> {
+    this.intoClause = `${table}`;
     return this;
   }
 
@@ -158,22 +179,22 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
     conditions: PartialCondition<T> | PartialCondition<T>[],
   ): QueryBuilder<T> {
     if (Array.isArray(conditions)) {
-      this.whereClause = `WHERE (${conditions.map(this.formatCondition).join(') OR (')})`;
+      this.whereClause = ` WHERE (${conditions.map(this.formatCondition).join(') OR (')})`;
     } else if (conditions) {
       if (Object.keys(conditions).length === 0) {
         return this;
       }
 
-      this.whereClause = `WHERE (${this.formatCondition(conditions)})`;
+      this.whereClause = ` WHERE (${this.formatCondition(conditions)})`;
     }
     return this;
   }
 
   andWhere(conditions: PartialCondition<T>): QueryBuilder<T> {
     if (this.whereClause === '') {
-      this.whereClause = `WHERE (${this.formatCondition(conditions)})`;
+      this.whereClause = ` WHERE (${this.formatCondition(conditions)})`;
     } else {
-      this.whereClause += `AND (${this.formatCondition(conditions)})`;
+      this.whereClause += ` AND (${this.formatCondition(conditions)})`;
     }
 
     return this;
@@ -181,9 +202,9 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
 
   orWhere(conditions: PartialCondition<T>[]): QueryBuilder<T> {
     if (this.whereClause === '') {
-      this.whereClause = `WHERE (${conditions.map(this.formatCondition).join(' OR')})`;
+      this.whereClause = ` WHERE (${conditions.map(this.formatCondition).join(' OR')})`;
     } else {
-      this.whereClause += `OR (${conditions.map(this.formatCondition).join(' OR')})`;
+      this.whereClause += ` OR (${conditions.map(this.formatCondition).join(' OR')})`;
     }
 
     return this;
@@ -204,7 +225,7 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
   }
 
   limit(limit: number): QueryBuilder<T> {
-    this.limitClause = `LIMIT ${limit ? limit : 50}`;
+    this.limitClause = ` LIMIT ${limit ? limit : 50}`;
     return this;
   }
 
@@ -230,10 +251,10 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
         const selectClause =
           this.selectColums.length > 0
             ? `SELECT ${this.selectColums.join(', ')}`
-            : 'SELECT *';
+            : 'SELECT * ';
         return `${selectClause}${this.fromClause}${this.whereClause}${this.orderByClause}${this.limitClause}${this.offsetClause};`;
       case 'UPDATE':
-        const updateClause = `UPDATE ${this.fromClause} SET ${Object.keys(
+        const updateClause = `UPDATE ${this.fromClause.split(' ')[2]} SET ${Object.keys(
           this.updateValues,
         )
           .map(
@@ -244,6 +265,22 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
         return `${updateClause}${this.whereClause};`;
       case 'DELETE':
         return `DELETE ${this.fromClause}${this.whereClause};`;
+      case 'INSERT':
+        if (!this.intoClause) {
+          throw new BadRequestException('Table name is required');
+        }
+        const columns = Object.keys(this.insertValues[0]).join(', ');
+        const values = this.insertValues
+          .map(
+            (valueObj) =>
+              `(${Object.values(valueObj)
+                .map((value) =>
+                  typeof value === 'string' ? `"${value}"` : value,
+                )
+                .join(', ')})`,
+          )
+          .join(', ');
+        return `INSERT INTO ${this.intoClause} (${columns}) VALUES ${values};`;
       default:
         throw new Error('Invalid operation');
     }
