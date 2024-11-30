@@ -117,14 +117,13 @@ export class GeneralUseCaseProxyModule {
           useFactory: (
             employeeRepository: EmployeeRepository,
             argonService: ArgonService,
-          ) => {
+          ) => 
             new UseCaseProxy(
               new ResetPasswordEmployeeUseCase(
                 employeeRepository,
                 argonService,
               ),
-            );
-          },
+            )
         },
       ],
       exports: [

@@ -166,7 +166,7 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
   }
 
   from(table: string): QueryBuilder<T> {
-    this.fromClause = `FROM ${table}`;
+    this.fromClause = ` FROM ${table}`;
     return this;
   }
 
@@ -225,7 +225,7 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
   }
 
   limit(limit: number): QueryBuilder<T> {
-    this.limitClause = `LIMIT ${limit ? limit : 50}`;
+    this.limitClause = ` LIMIT ${limit ? limit : 50}`;
     return this;
   }
 
@@ -254,7 +254,7 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
             : 'SELECT * ';
         return `${selectClause}${this.fromClause}${this.whereClause}${this.orderByClause}${this.limitClause}${this.offsetClause};`;
       case 'UPDATE':
-        const updateClause = `UPDATE ${this.fromClause.split(' ')[1]} SET ${Object.keys(
+        const updateClause = `UPDATE ${this.fromClause.split(' ')[2]} SET ${Object.keys(
           this.updateValues,
         )
           .map(

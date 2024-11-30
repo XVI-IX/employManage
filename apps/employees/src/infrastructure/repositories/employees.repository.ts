@@ -97,7 +97,7 @@ export class EmployeeRepository implements IEmployeeRepository {
     try {
       const result = await (await this.connection).query(builder);
 
-      return this.transformQueryResultToEmployeeModel(result[0]);
+      return this.transformQueryResultToEmployeeModel(result[0][0]);
     } catch (error) {
       this.logger.error('Error getting employee', error.stack);
       throw error;
@@ -147,13 +147,6 @@ export class EmployeeRepository implements IEmployeeRepository {
       .where({ id })
       .build();
 
-    const existingUserQuery = new QueryBuilder<EmployeeModel>()
-      .from(this.collectionName)
-      .where({ id })
-      .build();
-
-    console.log(existingUserQuery);
-
     try {
       const existingUser = await (
         await this.connection
@@ -163,8 +156,6 @@ export class EmployeeRepository implements IEmployeeRepository {
           .where({ id })
           .build(),
       );
-
-      console.log(builder);
 
       if (!existingUser) {
         throw new BadRequestException('Employee to be updated does not exist');
