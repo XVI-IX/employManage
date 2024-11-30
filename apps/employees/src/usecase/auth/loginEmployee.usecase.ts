@@ -39,11 +39,11 @@ export class LoginUseCase {
         email: employee.email,
       };
       const token = this.jwtTokenService.generateToken(tokenPayload);
-
-      console.log(token);
+      delete employee.password;
 
       return {
         token,
+        ...employee,
       };
     } catch (error) {
       throw new BadRequestException('Error logging in employee');

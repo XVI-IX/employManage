@@ -4,7 +4,8 @@ export class HttpResponse {
   static send<T = any>(message: string, data: ServiceInterface<T>) {
     return {
       status: true,
-      message: data && data.data ? data.data : null,
+      message: message ? message : 'Success',
+      data: data,
     };
   }
 

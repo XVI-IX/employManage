@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Inject, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { UpdateEmployeeInput } from 'apps/employees/src/infrastructure/common/schemas/account.schema';
 
@@ -14,15 +22,15 @@ export class EmployeeAccountController {
   }
 
   @Get('/:employeeId')
-  async getEmployeeById(@Query('employeeId') employeeId: string) {
+  async getEmployeeById(@Param('employeeId') employeeId: string) {
     return this.employeeService.send('getEmployeeById', { employeeId });
   }
 
   @Put('/:employeeId')
   async updateEmployee(
-    @Query('employeeId') employeeId: string,
+    @Param('employeeId') employeeId: string,
     @Body() data: UpdateEmployeeInput,
   ) {
-    return this.employeeService.send('updateEmployee', { employeeId, ...data });
+    return this.employeeService.send('updateEmployee', { employeeId, data });
   }
 }
