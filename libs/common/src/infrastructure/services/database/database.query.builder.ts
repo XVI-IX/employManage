@@ -179,22 +179,22 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
     conditions: PartialCondition<T> | PartialCondition<T>[],
   ): QueryBuilder<T> {
     if (Array.isArray(conditions)) {
-      this.whereClause = `WHERE (${conditions.map(this.formatCondition).join(') OR (')})`;
+      this.whereClause = ` WHERE (${conditions.map(this.formatCondition).join(') OR (')})`;
     } else if (conditions) {
       if (Object.keys(conditions).length === 0) {
         return this;
       }
 
-      this.whereClause = `WHERE (${this.formatCondition(conditions)})`;
+      this.whereClause = ` WHERE (${this.formatCondition(conditions)})`;
     }
     return this;
   }
 
   andWhere(conditions: PartialCondition<T>): QueryBuilder<T> {
     if (this.whereClause === '') {
-      this.whereClause = `WHERE (${this.formatCondition(conditions)})`;
+      this.whereClause = ` WHERE (${this.formatCondition(conditions)})`;
     } else {
-      this.whereClause += `AND (${this.formatCondition(conditions)})`;
+      this.whereClause += ` AND (${this.formatCondition(conditions)})`;
     }
 
     return this;
@@ -202,9 +202,9 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
 
   orWhere(conditions: PartialCondition<T>[]): QueryBuilder<T> {
     if (this.whereClause === '') {
-      this.whereClause = `WHERE (${conditions.map(this.formatCondition).join(' OR')})`;
+      this.whereClause = ` WHERE (${conditions.map(this.formatCondition).join(' OR')})`;
     } else {
-      this.whereClause += `OR (${conditions.map(this.formatCondition).join(' OR')})`;
+      this.whereClause += ` OR (${conditions.map(this.formatCondition).join(' OR')})`;
     }
 
     return this;
@@ -251,10 +251,10 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
         const selectClause =
           this.selectColums.length > 0
             ? `SELECT ${this.selectColums.join(', ')}`
-            : 'SELECT *';
+            : 'SELECT * ';
         return `${selectClause}${this.fromClause}${this.whereClause}${this.orderByClause}${this.limitClause}${this.offsetClause};`;
       case 'UPDATE':
-        const updateClause = `UPDATE ${this.fromClause} SET ${Object.keys(
+        const updateClause = `UPDATE ${this.fromClause.split(' ')[1]} SET ${Object.keys(
           this.updateValues,
         )
           .map(

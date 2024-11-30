@@ -1,6 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { IEmployeeRepository } from '../../domain/repositories';
 import { ITokenHelper } from '@app/common/domain/helpers/token/token.helper';
+import * as moment from 'moment';
 
 export class ForgotPasswordEmployeeUseCase {
   constructor(
@@ -8,7 +9,7 @@ export class ForgotPasswordEmployeeUseCase {
     private readonly tokenHelper: ITokenHelper,
   ) {}
 
-  async forgotPassword(email: string): Promise<any> {
+  async forgotPassword(email: string): Promise<unknown> {
     const employee = await this.employeeRepository.getEmployeeByEmail(email);
 
     if (!employee) {
@@ -18,14 +19,16 @@ export class ForgotPasswordEmployeeUseCase {
     const resetToken = this.tokenHelper.generateResetPasswordToken();
 
     await this.employeeRepository.update(employee.id, {
-      refreshTokenExpires: new Date(Date.now() + 3600000),
+      resetPasswordExpires: moment().utc().format('YYYY-MM-DD HH:mm:ss.SSS'),
       resetPasswordToken: resetToken,
     });
+
+    console.log('Reset token:', resetToken);
 
     // send email with reset token
 
     return {
-      resetToken,
+      message: 'Reset password email sent',
     };
   }
 }

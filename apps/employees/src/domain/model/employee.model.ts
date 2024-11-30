@@ -10,7 +10,7 @@ export class EmployeeModel {
   departmentId?: string;
   resetPasswordToken?: string;
   refreshToken?: string;
-  refreshTokenExpires?: Date | string;
+  resetPasswordExpires?: Date | string;
   role: string;
   jobTitle: string;
   createdAt: Date | string;

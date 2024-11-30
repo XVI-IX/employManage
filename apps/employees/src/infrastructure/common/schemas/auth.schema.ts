@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsString,
   IsUrl,
+  MaxLength,
 } from 'class-validator';
 
 export class RegisterEmployeeInput {
@@ -46,6 +47,24 @@ export class LoginEmployeePasswordInput {
   @IsNotEmpty()
   @IsEmail()
   email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+
+export class ForgotPasswordInput {
+  @IsString()
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+}
+
+export class ResetPasswordInput {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(6)
+  token: string;
 
   @IsString()
   @IsNotEmpty()

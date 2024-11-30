@@ -103,14 +103,13 @@ export class GeneralUseCaseProxyModule {
           useFactory: (
             employeeRepository: EmployeeRepository,
             tokenHelper: TokenHelper,
-          ) => {
+          ) =>
             new UseCaseProxy(
               new ForgotPasswordEmployeeUseCase(
                 employeeRepository,
                 tokenHelper,
               ),
-            );
-          },
+            ),
         },
         {
           inject: [EmployeeRepository, ArgonService],

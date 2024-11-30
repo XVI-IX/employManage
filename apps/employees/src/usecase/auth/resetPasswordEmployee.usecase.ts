@@ -19,7 +19,7 @@ export class ResetPasswordEmployeeUseCase {
       throw new BadRequestException('Invalid token');
     }
 
-    if (employee.refreshTokenExpires < new Date()) {
+    if (employee.resetPasswordExpires < new Date()) {
       throw new BadRequestException('Token expired');
     }
 
@@ -28,7 +28,7 @@ export class ResetPasswordEmployeeUseCase {
     await this.employeeRepository.update(employee.id, {
       password: hashedPassword,
       resetPasswordToken: null,
-      refreshTokenExpires: null,
+      resetPasswordExpires: null,
     });
 
     return {

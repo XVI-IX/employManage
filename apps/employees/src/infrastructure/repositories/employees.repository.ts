@@ -147,16 +147,24 @@ export class EmployeeRepository implements IEmployeeRepository {
       .where({ id })
       .build();
 
+    const existingUserQuery = new QueryBuilder<EmployeeModel>()
+      .from(this.collectionName)
+      .where({ id })
+      .build();
+
+    console.log(existingUserQuery);
+
     try {
       const existingUser = await (
         await this.connection
       ).query(
         new QueryBuilder<EmployeeModel>()
-          .findOne()
           .from(this.collectionName)
           .where({ id })
           .build(),
       );
+
+      console.log(builder);
 
       if (!existingUser) {
         throw new BadRequestException('Employee to be updated does not exist');
