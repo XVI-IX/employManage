@@ -1,4 +1,4 @@
-import { IArgonService } from 'apps/auth/src/domain/adapters';
+import { IArgonService } from '@app/common/domain/adapters/argon.interface';
 import { IEmployeeRepository } from '../../domain/repositories';
 import { BadRequestException } from '@nestjs/common';
 
@@ -23,7 +23,7 @@ export class ResetPasswordEmployeeUseCase {
       throw new BadRequestException('Token expired');
     }
 
-    const hashedPassword = await this.argonService.hash(newPassword);
+    const hashedPassword = await this.argonService.hashPassword(newPassword);
 
     await this.employeeRepository.update(employee.id, {
       password: hashedPassword,
