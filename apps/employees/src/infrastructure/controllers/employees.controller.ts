@@ -16,7 +16,6 @@ import { ForgotPasswordEmployeeUseCase } from '../../usecase/auth/forgotPassword
 import { ResetPasswordEmployeeUseCase } from '../../usecase/auth/resetPasswordEmployee.usecase';
 import { HttpResponse } from '@app/common/infrastructure/helpers/response.helper';
 import { GetEmployeeUseCase } from '../../usecase/account/getEmployee.usecase';
-import { UpdateEmployeeInput } from '../common/schemas/account.schema';
 import { UpdateEmployeeUseCase } from '../../usecase/account/updateEmployee.usecase';
 
 @Controller()

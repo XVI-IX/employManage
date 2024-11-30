@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Inject,
-  Param,
-  Put,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Put } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { UpdateEmployeeInput } from 'apps/employees/src/infrastructure/common/schemas/account.schema';
 

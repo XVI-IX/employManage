@@ -4,6 +4,9 @@ import { DatabaseService } from '@app/common/infrastructure/services/database/da
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AuthEmployeeController } from './infrastructure/controllers/employees/auth/authEmployee.controller';
 import { EmployeeAccountController } from './infrastructure/controllers/employees/account/employeeAccount.controller';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from '@app/common/infrastructure/guards/auth.guard';
+import { JwtTokenModule } from '@app/common/infrastructure/services/jwt/jwt.module';
 
 @Module({
   imports: [
@@ -49,9 +52,17 @@ import { EmployeeAccountController } from './infrastructure/controllers/employee
         },
       },
     ]),
+    JwtTokenModule,
   ],
   controllers: [AuthEmployeeController, EmployeeAccountController],
-  providers: [GatewayService, DatabaseService],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+    GatewayService,
+    DatabaseService,
+  ],
   exports: [],
 })
 export class GatewayModule {}
