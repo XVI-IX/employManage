@@ -22,4 +22,5 @@ export interface IEnvironmentInterface {
   getDatabasePassword(): string;
   getDatabase(): string;
   getEmployeeServicePort(): number;
+  getDepartmentServicePort(): number;
 }
