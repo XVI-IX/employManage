@@ -4,7 +4,7 @@ import { DepartmentRepositoryModule } from '../repositories/repositories.module'
 import { DepartmentRepository } from '../repositories/department.repository';
 import { GetAllDepartmentsUseCase } from '../../usecases/getAllDepartments.usecase';
 import { UseCaseProxy } from '@app/common/infrastructure/usecase-proxy/usecase-proxy';
-import { GetDepartmentById } from '../../usecases/getDepartmentById.usecase';
+import { GetDepartmentByIdUseCase } from '../../usecases/getDepartmentById.usecase';
 import { CreateDepartmentUseCase } from '../../usecases/createDepartment.usecase';
 import { updateDepartmentUseCase } from '../../usecases/updateDepartment.usecase';
 import { DeleteDepartmentUseCase } from '../../usecases/deleteDepartment.usecase';
@@ -39,7 +39,9 @@ export class DepartmentGeneralUseCaseProxyModule {
           provide:
             DepartmentGeneralUseCaseProxyModule.GET_DEPARTMENT_BY_ID_USE_CASE_PROXY,
           useFactory: (departmentRepository: DepartmentRepository) =>
-            new UseCaseProxy(new GetDepartmentById(departmentRepository)),
+            new UseCaseProxy(
+              new GetDepartmentByIdUseCase(departmentRepository),
+            ),
         },
         {
           inject: [DepartmentRepository],
