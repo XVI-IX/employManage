@@ -157,8 +157,26 @@ export class AttendanceRepository implements IAttendanceRepository {
     employeeId: string,
     year: string,
   ): Promise<AttendanceModel[]> {
+    const builder = new QueryBuilder<AttendanceModel>()
+      .select([])
+      .from(this.collectionName)
+      .whereYear({
+        field: 'date',
+        year,
+      })
+      .andWhere({
+        employeeId,
+      })
+      .build();
+
     try {
-      throw new Error('Method not implemented.');
+      const result = await this.databaseService.query(builder);
+
+      if (!result) {
+        throw new BadRequestException('Attendance could not be retrieved');
+      }
+
+      return this.transformQueryResultToAttendanceModelArray(result);
     } catch (error) {
       this.logger.error('Error getting attendance by employee id and year');
       throw new BadRequestException(
@@ -172,7 +190,31 @@ export class AttendanceRepository implements IAttendanceRepository {
     month: string,
     year: string,
   ): Promise<AttendanceModel[]> {
-    throw new Error('Method not implemented.');
+    const builder = new QueryBuilder<AttendanceModel>()
+      .select([])
+      .from(this.collectionName)
+      .whereYearAndMonth({
+        field: 'date',
+        year,
+        month,
+      })
+      .andWhere({
+        employeeId,
+      })
+      .build();
+
+    try {
+      const result = await this.databaseService.query(builder);
+
+      if (!result) {
+        throw new BadRequestException('Attendance could not be retrieved');
+      }
+
+      return this.transformQueryResultToAttendanceModelArray(result);
+    } catch (error) {
+      this.logger.error('Error getting attendance by employee id and month');
+      throw new BadRequestException();
+    }
   }
 
   async getAttendanceByEmployeeIdAndDateRange(
@@ -186,34 +228,142 @@ export class AttendanceRepository implements IAttendanceRepository {
   async find?(
     options: IFindOptions<AttendanceModel>,
   ): Promise<AttendanceModel[]> {
-    throw new Error('Method not implemented.');
+    const builder = new QueryBuilder<AttendanceModel>()
+      .findAll()
+      .from(this.collectionName)
+      .where(options.where)
+      .build();
+
+    try {
+      const result = await this.databaseService.query(builder);
+
+      if (!result || result.length === 0) {
+        throw new NotFoundException('Attendance not found');
+      }
+
+      return this.transformQueryResultToAttendanceModelArray(result);
+    } catch (error) {
+      this.logger.error('Error getting attendance', error.stack);
+      throw new BadRequestException('Error getting attendance');
+    }
   }
 
   async findOne?(
     query: IFindOneOptions<AttendanceModel>,
   ): Promise<AttendanceModel> {
-    throw new Error('Method not implemented.');
+    const builder: string = new QueryBuilder<AttendanceModel>()
+      .select([])
+      .from(this.collectionName)
+      .where(query.where)
+      .build();
+
+    try {
+      const result = await this.databaseService.query(builder);
+
+      if (!result || result.length === 0) {
+        throw new NotFoundException('Attendance not found');
+      }
+
+      return this.transformQueryResultToAttendanceModel(result[0]);
+    } catch (error) {
+      this.logger.error('Error getting attendance', error.stack);
+      throw new BadRequestException('Error getting attendance');
+    }
   }
 
   async paginate?(
     options: IPaginateOptions,
     searchOptions?: IFindOptions<AttendanceModel>,
   ): Promise<IPaginateResult<AttendanceModel>> {
-    throw new Error('Method not implemented.');
+    const { page, limit, sort } = options;
+    const builder = new QueryBuilder<AttendanceModel>()
+      .findAll()
+      .from(this.collectionName)
+      .where(searchOptions?.where)
+      .orderBy(sort as keyof AttendanceModel)
+      .limit(limit)
+      .offset((page - 1) * limit)
+      .build();
+    try {
+      const result = await this.databaseService.query(builder);
+
+      return {
+        data: this.transformQueryResultToAttendanceModelArray(result),
+        limit,
+        itemCount: result.length,
+        itemsPerPage: limit,
+        currentPage: page,
+      };
+    } catch (error) {
+      this.logger.error('Error paginating attendance', error.stack);
+      throw new BadRequestException('Error paginating attendance');
+    }
   }
 
   async delete?(id: string): Promise<string> {
-    throw new Error('Method not implemented.');
+    const builder = new QueryBuilder<AttendanceModel>()
+      .from(this.collectionName)
+      .where({ id })
+      .delete()
+      .build();
+
+    try {
+      const result = await this.databaseService.query(builder);
+
+      if (!result) {
+        throw new BadRequestException('Attendance could not be deleted.');
+      }
+
+      return 'Deleted';
+    } catch (error) {
+      this.logger.error('Error deleting attendance', error.stack);
+      throw new BadRequestException('Error deleting attendance');
+    }
   }
 
   async update?(
     id: string,
     entity: Partial<AttendanceModel>,
   ): Promise<AttendanceModel> {
-    throw new Error('Method not implemented.');
+    const builder = new QueryBuilder<AttendanceModel>()
+      .from(this.collectionName)
+      .update(entity)
+      .where({ id })
+      .build();
+
+    try {
+      const result = await this.databaseService.query(builder);
+
+      if (!result) {
+        throw new BadRequestException('Attendance could not be updated');
+      }
+
+      return this.transformQueryResultToAttendanceModel(result[0]);
+    } catch (error) {
+      this.logger.error('Error updating attendance', error.stack);
+      throw new BadRequestException('Error updating attendance');
+    }
   }
 
-  async save(entity: Partial<AttendanceModel>): Promise<AttendanceModel> {}
+  async save(entity: Partial<AttendanceModel>): Promise<AttendanceModel> {
+    const builder = new QueryBuilder<AttendanceModel>()
+      .from(this.collectionName)
+      .insert(entity)
+      .build();
+
+    try {
+      const result = await this.databaseService.query(builder);
+
+      if (!result) {
+        throw new BadRequestException('Attendance could not be saved');
+      }
+
+      return this.transformQueryResultToAttendanceModel(result[0]);
+    } catch (error) {
+      this.logger.error('Error saving attendance', error.stack);
+      throw new BadRequestException('Error saving attendance');
+    }
+  }
 
   private transformQueryResultToAttendanceModel(row: any): AttendanceModel {
     return {

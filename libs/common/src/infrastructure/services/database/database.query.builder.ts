@@ -192,7 +192,23 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
   }
 
   whereMonth(conditions: { field: keyof T; month: string }): QueryBuilder<T> {
-    this.whereClause = `WHERE MONTH(${String(conditions.field)}) = ${Months[conditions.month]}`;
+    this.whereClause = ` WHERE MONTH(${String(conditions.field)}) = ${Months[conditions.month]}`;
+
+    return this;
+  }
+
+  whereYear(conditions: { field: keyof T; year: string }): QueryBuilder<T> {
+    this.whereClause = ` WHERE YEAR(${String(conditions.field)}) = ${conditions.year}`;
+
+    return this;
+  }
+
+  whereYearAndMonth(conditions: {
+    field: keyof T;
+    year: string;
+    month: string;
+  }): QueryBuilder<T> {
+    this.whereClause = ` WHERE YEAR(${String(conditions.field)}) = ${conditions.year} AND MONTH(${String(conditions.field)}) = ${Months[conditions.month]}`;
 
     return this;
   }
