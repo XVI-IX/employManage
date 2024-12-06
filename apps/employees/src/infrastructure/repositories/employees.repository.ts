@@ -162,7 +162,16 @@ export class EmployeeRepository implements IEmployeeRepository {
       }
 
       const result = await (await this.connection).query(builder);
-      return this.transformQueryResultToEmployeeModel(result[0]);
+      console.log(result);
+
+      const responseQuery = new QueryBuilder<EmployeeModel>()
+        .findOne()
+        .from(this.collectionName)
+        .where({ id })
+        .build();
+
+      const response = await (await this.connection).query(responseQuery);
+      return this.transformQueryResultToEmployeeModel(response[0][0]);
     } catch (error) {
       this.logger.error('Error updating employee', error.stack);
       throw error;

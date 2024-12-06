@@ -57,7 +57,11 @@ class EnvironmentConfig implements IEnvironmentInterface {
   }
 
   getEmployeeServicePort(): number {
-    return env.get('EMPLOYEE_SERVICE_PORT').asInt() || 3001;
+    return env.get('EMPLOYEE_SERVICE_PORT').asInt();
+  }
+
+  getDepartmentServicePort(): number {
+    return env.get('DEPARTMENT_SERVICE_PORT').asInt();
   }
 
   getJWTSecret(): string {

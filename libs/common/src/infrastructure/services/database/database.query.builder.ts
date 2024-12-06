@@ -262,6 +262,7 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
               `${String(field)} = ${typeof this.updateValues[field] === 'string' ? `"${this.updateValues[field]}"` : this.updateValues[field]}`,
           )
           .join(', ')}`;
+        console.log(`${updateClause}${this.whereClause};`);
         return `${updateClause}${this.whereClause};`;
       case 'DELETE':
         return `DELETE ${this.fromClause}${this.whereClause};`;
