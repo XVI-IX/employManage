@@ -11,6 +11,9 @@ export class CreateDepartmentInput {
 }
 
 export class UpdateDepartmentInput {
+  @IsOptional()
+  id: string;
+
   @IsString()
   name: string;
 }
