@@ -8,6 +8,8 @@ export class GetAllDepartmentsUseCase {
   async getAllDepartments(): Promise<DepartmentModel[]> {
     const departments = await this.departmentRepository.find({});
 
+    console.log('Departments:', departments);
+
     if (!departments) {
       throw new BadRequestException('Departments could not be retrieved');
     }

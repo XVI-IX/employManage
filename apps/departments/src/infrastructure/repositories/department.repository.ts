@@ -40,19 +40,33 @@ export class DepartmentRepository implements IDepartmentRepository {
     const departmentDocument = {
       id: departmentId,
       name: entity.name,
-      parentId: entity.parentId,
-      createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
-      updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+      parentId: entity.parentId || '',
+      // createdAt: moment().toISOString(),
+      // updatedAt: moment().toISOString(),
     };
     const builder = new QueryBuilder<DepartmentModel>()
       .into(this.collectionName)
       .insert(departmentDocument)
       .build();
 
+    const updatedQuery = new QueryBuilder<DepartmentModel>()
+      .from(this.collectionName)
+      .findOne()
+      .where({ id: departmentDocument.id })
+      .build();
+
     try {
       const result = await this.databaseService.query(builder);
 
-      return this.transformQueryResultToDepartmentModel(result[0]);
+      if (result.affectedRows === 0) {
+        throw new BadRequestException('Error saving department');
+      }
+
+      const updatedResult = await this.databaseService.query(updatedQuery);
+
+      console.log(updatedResult);
+
+      return this.transformQueryResultToDepartmentModel(updatedResult[0]);
     } catch (error) {
       this.logger.error('Error saving department', error.stack);
       throw new BadRequestException('Error saving department');
@@ -78,7 +92,11 @@ export class DepartmentRepository implements IDepartmentRepository {
     try {
       const result = await this.databaseService.query(builder);
 
-      return this.transformQueryResultToDepartmentModel(result[0][0]);
+      if (result.length === 0) {
+        return null;
+      }
+
+      return this.transformQueryResultToDepartmentModel(result);
     } catch (error) {
       this.logger.error('Error finding department', error.stack);
       throw new BadRequestException('Error finding department');
@@ -104,7 +122,11 @@ export class DepartmentRepository implements IDepartmentRepository {
     try {
       const result = await this.databaseService.query(builder);
 
-      return this.transformQueryResultsToDepartmentModels(result[0]);
+      if (result.length === 0) {
+        return [];
+      }
+
+      return this.transformQueryResultsToDepartmentModels(result);
     } catch (error) {
       this.logger.error('Error finding department', error.stack);
       throw new BadRequestException('Error finding department');

@@ -7,6 +7,7 @@ import { EmployeeAccountController } from './infrastructure/controllers/employee
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from '@app/common/infrastructure/guards/auth.guard';
 import { JwtTokenModule } from '@app/common/infrastructure/services/jwt/jwt.module';
+import { DepartmentControllerGateway } from './infrastructure/controllers/departments/departments.controllers';
 
 @Module({
   imports: [
@@ -54,7 +55,11 @@ import { JwtTokenModule } from '@app/common/infrastructure/services/jwt/jwt.modu
     ]),
     JwtTokenModule,
   ],
-  controllers: [AuthEmployeeController, EmployeeAccountController],
+  controllers: [
+    AuthEmployeeController,
+    EmployeeAccountController,
+    DepartmentControllerGateway,
+  ],
   providers: [
     {
       provide: APP_GUARD,
