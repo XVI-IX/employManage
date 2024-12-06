@@ -9,7 +9,6 @@ import { PoolConnection } from 'mysql2/promise';
 import { DatabaseService } from '@app/common/infrastructure/services/database/database.service';
 import { DepartmentModel } from '../../domain/models/department.model';
 import { v4 as uuid } from 'uuid';
-import * as moment from 'moment';
 import { QueryBuilder } from '@app/common/infrastructure/services/database/database.query.builder';
 import {
   IFindOneOptions,
@@ -96,7 +95,9 @@ export class DepartmentRepository implements IDepartmentRepository {
         return null;
       }
 
-      return this.transformQueryResultToDepartmentModel(result);
+      console.log(result);
+
+      return this.transformQueryResultToDepartmentModel(result[0]);
     } catch (error) {
       this.logger.error('Error finding department', error.stack);
       throw new BadRequestException('Error finding department');
@@ -147,7 +148,7 @@ export class DepartmentRepository implements IDepartmentRepository {
   ): Promise<DepartmentModel> {
     const builder: string = new QueryBuilder<DepartmentModel>()
       .from(this.collectionName)
-      .update(entity)
+      .update({ name: entity.name, parentId: entity.parentId || '' })
       .where({ id })
       .build();
 
@@ -161,11 +162,11 @@ export class DepartmentRepository implements IDepartmentRepository {
       const checkDepartmentExists =
         await this.databaseService.query(checkDepartmentQuery);
 
-      if (!checkDepartmentExists[0][0]) {
+      if (!checkDepartmentExists[0]) {
         throw new NotFoundException('Department not found');
       }
 
-      await this.databaseService.query(builder);
+      const updated = await this.databaseService.query(builder);
 
       const getUpdatedDepartmentQuery: string =
         new QueryBuilder<DepartmentModel>()
@@ -178,9 +179,7 @@ export class DepartmentRepository implements IDepartmentRepository {
         getUpdatedDepartmentQuery,
       );
 
-      return this.transformQueryResultToDepartmentModel(
-        updatedDepartment[0][0],
-      );
+      return this.transformQueryResultToDepartmentModel(updatedDepartment[0]);
     } catch (error) {
       this.logger.error('Error updating department', error.stack);
       throw new BadRequestException('Error updating department');
@@ -249,7 +248,7 @@ export class DepartmentRepository implements IDepartmentRepository {
       const checkDepartmentExists =
         await this.databaseService.query(checkDepartmentQuery);
 
-      if (!checkDepartmentExists[0][0]) {
+      if (!checkDepartmentExists[0]) {
         throw new NotFoundException('Department not found');
       }
 
