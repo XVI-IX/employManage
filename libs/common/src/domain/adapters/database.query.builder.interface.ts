@@ -86,6 +86,13 @@ export interface IQueryBuilder<T> {
   ): IQueryBuilder<T>;
 
   /**
+   * @name whereMonth
+   * @description set the conditions to query by month
+   * @param conditions month conditions to query
+   */
+  whereMonth(conditions: { field: keyof T; month: string }): IQueryBuilder<T>;
+
+  /**
    * @name orderBy
    * @param field field to order the query results by
    * @param direction ASC | DESC
