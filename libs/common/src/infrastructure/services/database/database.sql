@@ -1,3 +1,7 @@
+CREATE DATABASE IF NOT EXISTS employManage;
+
+USE employManage;
+
 CREATE TABLE Employees (
   id VARCHAR(36) DEFAULT (uuid()) PRIMARY KEY,
   firstName VARCHAR(255) NOT NULL,
