@@ -64,6 +64,14 @@ class EnvironmentConfig implements IEnvironmentInterface {
     return env.get('DEPARTMENT_SERVICE_PORT').asInt();
   }
 
+  getAttendanceServicePort(): number {
+    return env.get('ATTENDANCE_SERVICE_PORT').asInt();
+  }
+
+  getMicroServicesHost(): string {
+    return env.get('MICROSERVICES_HOST').asString();
+  }
+
   getJWTSecret(): string {
     return env.get('JWT_SECRET').asString();
   }
