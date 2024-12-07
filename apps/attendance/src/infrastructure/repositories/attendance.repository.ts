@@ -327,8 +327,9 @@ export class AttendanceRepository implements IAttendanceRepository {
   ): Promise<AttendanceModel> {
     const builder = new QueryBuilder<AttendanceModel>()
       .from(this.collectionName)
-      .update(entity)
-      .where({ id })
+      .update({ checkOut: entity.checkOut })
+      .where({ employeeId: id })
+      .andWhere({ date: entity.date })
       .build();
 
     try {
