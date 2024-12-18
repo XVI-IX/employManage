@@ -217,12 +217,65 @@ export class AttendanceRepository implements IAttendanceRepository {
     }
   }
 
+  /**
+   * @name getAttendanceByEmployeeIdAndDateRange
+   * @description Get attendance records for an employee within a specified date range
+   *
+   * @param employeeId Unique identifier for the employee to get attendance records for.
+   * @param startDate start date for the date range.
+   * @param endDate end date for the date range.
+   */
   async getAttendanceByEmployeeIdAndDateRange(
     employeeId: string,
     startDate: string,
     endDate: string,
   ): Promise<AttendanceModel[]> {
-    throw new Error('Method not implemented.');
+    const queryString = `SELECT * FROM ${this.collectionName} WHERE employeeId = '${employeeId}' AND date BETWEEN '${startDate}' AND '${endDate};'`;
+    try {
+      const results = await this.databaseService.query(queryString);
+
+      if (!results || results.length === 0) {
+        throw new NotFoundException('Attendance not found');
+      }
+
+      return this.transformQueryResultToAttendanceModelArray(results);
+    } catch (error) {
+      this.logger.error(
+        'Error getting attendance by employee id and date range',
+        error.stack,
+      );
+      throw new BadRequestException(
+        'Error getting attendance by employee id and date range',
+      );
+    }
+  }
+
+  /**
+   * @name getAttendanceByDateRange
+   * @description Get attendance records within a specified date range
+   *
+   * @param start Starting point for the date range
+   * @param end Ending point for the date range
+   * @returns an array of the attendance records within the specified date range.
+   */
+  async getAttendanceByDateRange(
+    start: string,
+    end: string,
+  ): Promise<AttendanceModel[]> {
+    const queryString = `SELECT * FROM ${this.collectionName} WHERE date BETWEEN '${start}' AND '${end};'`;
+
+    try {
+      const result = await this.databaseService.query(queryString);
+
+      if (!result || result.length === 0) {
+        throw new NotFoundException('Attendance not found');
+      }
+
+      return this.transformQueryResultToAttendanceModelArray(result);
+    } catch (error) {
+      this.logger.error('Error getting attendance by date range', error.stack);
+      throw new BadRequestException('Error getting attendance by date range');
+    }
   }
 
   async find?(

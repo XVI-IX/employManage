@@ -9,6 +9,8 @@ import { UpdateAttendanceUseCase } from '../../usecases/updateAttendance.usecase
 import { GetAttendanceByEmployeeIdAndMonth } from '../../usecases/getAttendanceByEmployeeIdAndMonth.usecase';
 import { GetAttendanceByEmployeeIdAndMonthAndYear } from '../../usecases/getAttendanceByEmployeeIdAndMonthAndYear.usecase';
 import { GetAttendanceByEmployeeIdAndYear } from '../../usecases/getAttendanceByEmployeeIdAndYear.usecase';
+import { GetAttendanceByEmployeeIdAndDateRangeUseCase } from '../../usecases/getAttendanceByEmployeeIdAndDateRange.usecase';
+import { GetAttendanceByDateRangeUseCase } from '../../usecases/getAttendanceByDateRange.usecase';
 
 @Module({
   imports: [DatabaseModule, AttendanceRepositoryModule],
@@ -109,6 +111,26 @@ export class AttendanceGeneralUseCaseProxyModule {
           useFactory: (attendanceRepository: AttendanceRepository) =>
             new UseCaseProxy(
               new GetAttendanceByEmployeeIdAndYear(attendanceRepository),
+            ),
+        },
+        {
+          inject: [AttendanceRepository],
+          provide:
+            AttendanceGeneralUseCaseProxyModule.GET_ATTENDANCE_BY_EMPLOYEE_ID_AND_DATE_RANGE,
+          useFactory: (attendanceRepository: AttendanceRepository) =>
+            new UseCaseProxy(
+              new GetAttendanceByEmployeeIdAndDateRangeUseCase(
+                attendanceRepository,
+              ),
+            ),
+        },
+        {
+          inject: [AttendanceRepository],
+          provide:
+            AttendanceGeneralUseCaseProxyModule.GET_ATTENDANCE_BY_DATE_RANGE_USE_CASE_PROXY,
+          useFactory: (attendanceRepository: AttendanceRepository) =>
+            new UseCaseProxy(
+              new GetAttendanceByDateRangeUseCase(attendanceRepository),
             ),
         },
       ],
