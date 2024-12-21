@@ -25,4 +25,5 @@ export interface IEnvironmentInterface {
   getEmployeeServicePort(): number;
   getDepartmentServicePort(): number;
   getAttendanceServicePort(): number;
+  getProjectServicePort(): number;
 }

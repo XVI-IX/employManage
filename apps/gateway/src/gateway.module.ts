@@ -9,6 +9,7 @@ import { AuthGuard } from '@app/common/infrastructure/guards/auth.guard';
 import { JwtTokenModule } from '@app/common/infrastructure/services/jwt/jwt.module';
 import { DepartmentControllerGateway } from './infrastructure/controllers/departments/departments.controllers';
 import { AttendanceGatewayController } from './infrastructure/controllers/attendance/attendance.controller';
+import { ProjectsGatewayController } from './infrastructure/controllers/projects/projects.controller';
 
 @Module({
   imports: [
@@ -46,7 +47,7 @@ import { AttendanceGatewayController } from './infrastructure/controllers/attend
         },
       },
       {
-        name: 'PROJECT_SERVICE',
+        name: 'PROJECTS_SERVICE',
         transport: Transport.TCP,
         options: {
           host: 'localhost',
@@ -61,6 +62,7 @@ import { AttendanceGatewayController } from './infrastructure/controllers/attend
     EmployeeAccountController,
     DepartmentControllerGateway,
     AttendanceGatewayController,
+    ProjectsGatewayController,
   ],
   providers: [
     {
