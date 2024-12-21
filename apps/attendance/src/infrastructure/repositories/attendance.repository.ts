@@ -270,7 +270,8 @@ export class AttendanceRepository implements IAttendanceRepository {
     start: string,
     end: string,
   ): Promise<AttendanceModel[]> {
-    const queryString = `SELECT * FROM ${this.collectionName} WHERE date BETWEEN '${start}' AND '${end};'`;
+    const queryString = `SELECT * FROM ${this.collectionName} WHERE createdAt BETWEEN '${start}' AND '${end}';`;
+    console.log(queryString);
 
     try {
       const result = await this.databaseService.query(queryString);

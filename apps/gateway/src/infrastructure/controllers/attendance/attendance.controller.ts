@@ -48,10 +48,11 @@ export class AttendanceGatewayController {
     });
   }
 
-  @Get('/date-range')
+  @Get('/all/date-range')
   async getAttendanceByDateRange(
     @Query() qObj: { start?: string; end?: string },
   ) {
+    console.log(qObj);
     return this.attendanceService.send('getAttendanceByDateRange', qObj);
   }
 
