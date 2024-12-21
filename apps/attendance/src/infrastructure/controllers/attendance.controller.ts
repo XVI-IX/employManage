@@ -15,6 +15,8 @@ import { GetAttendanceByEmployeeIdAndDateUseCase } from '../../usecases/getAtten
 import { GetAttendanceByEmployeeIdAndMonthAndYear } from '../../usecases/getAttendanceByEmployeeIdAndMonthAndYear.usecase';
 import { GetAttendanceByEmployeeIdAndYear } from '../../usecases/getAttendanceByEmployeeIdAndYear.usecase';
 import { GetAttendanceByDateRangeUseCase } from '../../usecases/getAttendanceByDateRange.usecase';
+import { GetAttendanceByEmployeeIdUseCase } from '../../usecases/getAttendanceByEmployeeId.usecase';
+import { GetAttendanceByEmployeeIdAndMonth } from '../../usecases/getAttendanceByEmployeeIdAndMonth.usecase';
 
 @Controller()
 export class AttendanceController {
@@ -38,7 +40,7 @@ export class AttendanceController {
     @Inject(
       AttendanceGeneralUseCaseProxyModule.GET_ATTENDANCE_BY_EMPLOYEE_ID_AND_MONTH,
     )
-    private readonly getAttendanceByEmployeeIdAndMonth: UseCaseProxy<GetAttendanceByEmployeeIdAndDateUseCase>,
+    private readonly getAttendanceByEmployeeIdAndMonth: UseCaseProxy<GetAttendanceByEmployeeIdAndMonth>,
     @Inject(
       AttendanceGeneralUseCaseProxyModule.GET_ATTENDANCE_BY_EMPLOYEE_ID_AND_MONTH_AND_YEAR,
     )
@@ -48,13 +50,17 @@ export class AttendanceController {
     )
     private readonly getAttendanceByEmployeeIdAndYearUseCase: UseCaseProxy<GetAttendanceByEmployeeIdAndYear>,
     @Inject(
-      AttendanceGeneralUseCaseProxyModule.GET_ATTENDANCE_BY_EMPLOYEE_ID_AND_DATE_RANGE,
+      AttendanceGeneralUseCaseProxyModule.GET_ATTENDANCE_BY_EMPLOYEE_ID_AND_DATE_USE_CASE_PROXY,
     )
     private readonly getAttendanceByEmployeeIdAndDateUseCase: UseCaseProxy<GetAttendanceByEmployeeIdAndDateUseCase>,
     @Inject(
       AttendanceGeneralUseCaseProxyModule.GET_ATTENDANCE_BY_DATE_RANGE_USE_CASE_PROXY,
     )
     private readonly getAttendanceByDateRangeUseCase: UseCaseProxy<GetAttendanceByDateRangeUseCase>,
+    @Inject(
+      AttendanceGeneralUseCaseProxyModule.GET_ATTENDANCE_BY_EMPLOYEE_ID_USE_CASE_PROXY,
+    )
+    private readonly getAttendanceByEmployeeIdUseCase: UseCaseProxy<GetAttendanceByEmployeeIdUseCase>,
   ) {}
 
   @MessagePattern('createAttendance')
@@ -117,8 +123,12 @@ export class AttendanceController {
     return HttpResponse.send('Attendance record retrieved', response);
   }
 
-  @MessagePattern('getAttendanceByEmployeeIdAndDate')
-  async getAttendanceByEmployeeIdAndDate(
-    @Payload() data: { employeeId: string; date: string },
-  ) {}
+  @MessagePattern('getAttendanceByEmployeeId')
+  async getAttendanceByEmployeeId(@Payload() data: { employeeId: string }) {
+    const response = await this.getAttendanceByEmployeeIdUseCase
+      .getInstance()
+      .getAttendanceByEmployeeId(data.employeeId);
+
+    return HttpResponse.send('Attendance record retrieved', response);
+  }
 }

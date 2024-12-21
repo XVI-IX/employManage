@@ -40,6 +40,51 @@ CREATE TABLE Attendance (
   
   FOREIGN KEY (employeeId) REFERENCES Employees(id),
   CONSTRAINT check_in_before_check_out CHECK (checkIn < checkOut)
+);
+
+CREATE TABLE Projects (
+  id VARCHAR(36) DEFAULT (uuid()) PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  startDate DATE NOT NULL,
+  endDate DATE NOT NULL,
+  departmentId VARCHAR(36) NOT NULL,
+  supervisorId VARCHAR(36) NOT NULL,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (departmentId) REFERENCES Departments(id),
+  FOREIGN KEY (supervisorId) REFERENCES Employees(id)
+);
+
+CREATE TABLE PROJECT_ASSIGNEES (
+  id VARCHAR(36) DEFAULT (uuid()) PRIMARY KEY,
+  projectId VARCHAR(36) NOT NULL,
+  employeeId VARCHAR(36) NOT NULL,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (projectId) REFERENCES Projects(id),
+  FOREIGN KEY (employeeId) REFERENCES Employees(id)
+);
+
+CREATE TABLE TASKS (
+  id VARCHAR(36) DEFAULT (uuid()) PRIMARY KEY,
+  projectId VARCHAR(36) NOT NULL,
+  employeeId VARCHAR(36) NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  startDate DATE NOT NULL,
+  endDate DATE NOT NULL,
+  status VARCHAR(50) NOT NULL DEFAULT 'pending',
+
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+
+  FOREIGN KEY (projectId) REFERENCES Projects(id),
+  FOREIGN KEY (employeeId) REFERENCES Employees(id)
+
 )
 
   -- FOREIGN KEY (departmentId) REFERENCES Department(id)

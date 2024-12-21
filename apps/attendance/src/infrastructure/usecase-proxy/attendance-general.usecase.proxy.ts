@@ -12,6 +12,8 @@ import { GetAttendanceByEmployeeIdAndYear } from '../../usecases/getAttendanceBy
 import { GetAttendanceByEmployeeIdAndDateRangeUseCase } from '../../usecases/getAttendanceByEmployeeIdAndDateRange.usecase';
 import { GetAttendanceByDateRangeUseCase } from '../../usecases/getAttendanceByDateRange.usecase';
 import { GetAllAttendanceUseCase } from '../../usecases/getAllAttendance.usecase';
+import { GeneralUseCaseProxyModule } from 'apps/employees/src/infrastructure/usecase-proxy/general-usecase-proxy.module';
+import { GetAttendanceByEmployeeIdAndDateUseCase } from '../../usecases/getAttendanceByEmployeeIdAndDate.usecase';
 
 @Module({
   imports: [DatabaseModule, AttendanceRepositoryModule],
@@ -32,6 +34,8 @@ export class AttendanceGeneralUseCaseProxyModule {
     'GET_ATTENDANCE_BY_EMPLOYEE_ID_AND_YEAR';
   static GET_ATTENDANCE_BY_EMPLOYEE_ID_AND_DATE_RANGE =
     'GET_ATTENDANCE_BY_EMPLOYEE_ID_AND_DATE_RANGE';
+  static GET_ATTENDANCE_BY_EMPLOYEE_ID_AND_DATE_USE_CASE_PROXY =
+    'GET_ATTENDANCE_BY_EMPLOYEE_ID_AND_DATE_USE_CASE_PROXY';
   static GET_ATTENDANCE_BY_EMPLOYEE_ID_AND_MONTH_AND_YEAR =
     'GET_ATTENDANCE_BY_EMPLOYEE_ID_AND_MONTH_AND_YEAR';
   static GET_ATTENDANCE_BY_DATE_RANGE_USE_CASE_PROXY =
@@ -134,6 +138,15 @@ export class AttendanceGeneralUseCaseProxyModule {
               new GetAttendanceByDateRangeUseCase(attendanceRepository),
             ),
         },
+        {
+          inject: [AttendanceRepository],
+          provide:
+            AttendanceGeneralUseCaseProxyModule.GET_ATTENDANCE_BY_EMPLOYEE_ID_AND_DATE_USE_CASE_PROXY,
+          useFactory: (attendanceRepository: AttendanceRepository) =>
+            new UseCaseProxy(
+              new GetAttendanceByEmployeeIdAndDateUseCase(attendanceRepository),
+            ),
+        },
       ],
       exports: [
         AttendanceGeneralUseCaseProxyModule.CREATE_ATTENDANCE_USE_CASE_PROXY,
@@ -147,6 +160,8 @@ export class AttendanceGeneralUseCaseProxyModule {
         AttendanceGeneralUseCaseProxyModule.GET_ATTENDANCE_BY_ID_USE_CASE_PROXY,
         AttendanceGeneralUseCaseProxyModule.UPDATE_ATTENDANCE_USE_CASE_PROXY,
         AttendanceGeneralUseCaseProxyModule.GET_ATTENDANCE_BY_EMPLOYEE_ID_AND_MONTH_AND_YEAR,
+        AttendanceGeneralUseCaseProxyModule.GET_ATTENDANCE_BY_EMPLOYEE_ID_USE_CASE_PROXY,
+        AttendanceGeneralUseCaseProxyModule.GET_ATTENDANCE_BY_EMPLOYEE_ID_AND_DATE_USE_CASE_PROXY,
       ],
     };
   }
