@@ -21,6 +21,9 @@ export interface IEnvironmentInterface {
   getDatabasePort(): number;
   getDatabasePassword(): string;
   getDatabase(): string;
+  getMicroServicesHost(): string;
   getEmployeeServicePort(): number;
   getDepartmentServicePort(): number;
+  getAttendanceServicePort(): number;
+  getProjectServicePort(): number;
 }

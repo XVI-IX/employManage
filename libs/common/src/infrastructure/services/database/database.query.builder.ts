@@ -4,6 +4,7 @@ import {
   PartialCondition,
 } from '@app/common/domain/adapters';
 import { BadRequestException } from '@nestjs/common';
+import { Months } from 'apps/attendance/src/infrastructure/common/schema/months.schema';
 
 export function ILike<T>(
   field: keyof T,
@@ -187,6 +188,28 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
 
       this.whereClause = ` WHERE (${this.formatCondition(conditions)})`;
     }
+    return this;
+  }
+
+  whereMonth(conditions: { field: keyof T; month: string }): QueryBuilder<T> {
+    this.whereClause = ` WHERE MONTH(${String(conditions.field)}) = ${Months[conditions.month]}`;
+
+    return this;
+  }
+
+  whereYear(conditions: { field: keyof T; year: string }): QueryBuilder<T> {
+    this.whereClause = ` WHERE YEAR(${String(conditions.field)}) = ${conditions.year}`;
+
+    return this;
+  }
+
+  whereYearAndMonth(conditions: {
+    field: keyof T;
+    year: string;
+    month: string;
+  }): QueryBuilder<T> {
+    this.whereClause = ` WHERE YEAR(${String(conditions.field)}) = ${conditions.year} AND MONTH(${String(conditions.field)}) = ${Months[conditions.month]}`;
+
     return this;
   }
 

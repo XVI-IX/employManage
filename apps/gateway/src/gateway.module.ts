@@ -8,6 +8,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from '@app/common/infrastructure/guards/auth.guard';
 import { JwtTokenModule } from '@app/common/infrastructure/services/jwt/jwt.module';
 import { DepartmentControllerGateway } from './infrastructure/controllers/departments/departments.controllers';
+import { AttendanceGatewayController } from './infrastructure/controllers/attendance/attendance.controller';
+import { ProjectsGatewayController } from './infrastructure/controllers/projects/projects.controller';
 
 @Module({
   imports: [
@@ -45,7 +47,7 @@ import { DepartmentControllerGateway } from './infrastructure/controllers/depart
         },
       },
       {
-        name: 'PROJECT_SERVICE',
+        name: 'PROJECTS_SERVICE',
         transport: Transport.TCP,
         options: {
           host: 'localhost',
@@ -59,6 +61,8 @@ import { DepartmentControllerGateway } from './infrastructure/controllers/depart
     AuthEmployeeController,
     EmployeeAccountController,
     DepartmentControllerGateway,
+    AttendanceGatewayController,
+    ProjectsGatewayController,
   ],
   providers: [
     {
