@@ -5,6 +5,7 @@ import { DatabaseModule } from '@app/common/infrastructure/services/database/dat
 import { ProjectRepositoryModule } from './infrastructure/repositories/projects.repository.module';
 import { RepositoriesModule } from 'apps/employees/src/infrastructure/repositories/repositories.module';
 import { DepartmentRepositoryModule } from 'apps/departments/src/infrastructure/repositories/repositories.module';
+import { ProjectsController } from './infrastructure/controllers/projects.controller';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { DepartmentRepositoryModule } from 'apps/departments/src/infrastructure/
     DepartmentRepositoryModule,
     ProjectsGeneralUseCaseProxy.register(),
   ],
-  controllers: [],
+  controllers: [ProjectsController],
   providers: [ProjectsService],
 })
 export class ProjectsModule {}

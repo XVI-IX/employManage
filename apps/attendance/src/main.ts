@@ -10,7 +10,7 @@ async function bootstrap() {
       transport: Transport.TCP,
       options: {
         host: envConfig.getMicroServicesHost(),
-        port: envConfig.getProjectServicePort(),
+        port: envConfig.getAttendanceServicePort(),
       },
     },
   );
