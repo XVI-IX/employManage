@@ -1,4 +1,3 @@
-import { DatabaseService } from '@app/common/infrastructure/services/database/database.service';
 import { IAttendanceRepository } from '../../domain/repositories';
 import { AttendanceModel } from '../../domain/models';
 import {
@@ -7,12 +6,21 @@ import {
   IPaginateOptions,
   IPaginateResult,
 } from '@app/common/domain/adapters';
-import { BadRequestException, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { QueryBuilder } from '@app/common/infrastructure/services/database/database.query.builder';
+import { DatabaseService } from '@app/common/infrastructure/services/database/database.service';
 
+@Injectable()
 export class AttendanceRepository implements IAttendanceRepository {
-  private readonly collectionName = 'attendance';
-  private readonly logger: Logger;
+  private collectionName = 'Attendance';
+  private logger: Logger;
+  // private connection: Promise<PoolConnection>;
+
   constructor(private readonly databaseService: DatabaseService) {
     this.logger = new Logger(AttendanceRepository.name);
   }
@@ -399,11 +407,19 @@ export class AttendanceRepository implements IAttendanceRepository {
     }
   }
 
+  /**
+   * @name save
+   * @description Save attendance data
+   *
+   * @param entity Object containing attendance data
+   * @returns clockin attendance data
+   */
   async save(entity: Partial<AttendanceModel>): Promise<AttendanceModel> {
     const builder = new QueryBuilder<AttendanceModel>()
-      .from(this.collectionName)
+      .into(this.collectionName)
       .insert(entity)
       .build();
+
 
     try {
       const result = await this.databaseService.query(builder);

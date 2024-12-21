@@ -63,8 +63,6 @@ export class DepartmentRepository implements IDepartmentRepository {
 
       const updatedResult = await this.databaseService.query(updatedQuery);
 
-      console.log(updatedResult);
-
       return this.transformQueryResultToDepartmentModel(updatedResult[0]);
     } catch (error) {
       this.logger.error('Error saving department', error.stack);
@@ -94,8 +92,6 @@ export class DepartmentRepository implements IDepartmentRepository {
       if (result.length === 0) {
         return null;
       }
-
-      console.log(result);
 
       return this.transformQueryResultToDepartmentModel(result[0]);
     } catch (error) {

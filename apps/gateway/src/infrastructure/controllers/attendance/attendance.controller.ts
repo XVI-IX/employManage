@@ -1,3 +1,4 @@
+import { Public } from '@app/common/infrastructure/decorators';
 import {
   Body,
   Controller,
@@ -22,6 +23,7 @@ export class AttendanceGatewayController {
     private readonly attendanceService: ClientProxy,
   ) {}
 
+  @Public()
   @Post('/')
   async createAttendance(@Body() data: CreateAttendanceInput) {
     return this.attendanceService.send('createAttendance', data);
@@ -37,6 +39,7 @@ export class AttendanceGatewayController {
     return this.attendanceService.send('getAttendanceById', { attendanceId });
   }
 
+  @Public()
   @Put('/')
   async updateAttendance(@Body() data: CheckOutInput) {
     return this.attendanceService.send('checkout', {
