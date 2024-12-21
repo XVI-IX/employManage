@@ -11,6 +11,7 @@ import { GetAttendanceByEmployeeIdAndMonthAndYear } from '../../usecases/getAtte
 import { GetAttendanceByEmployeeIdAndYear } from '../../usecases/getAttendanceByEmployeeIdAndYear.usecase';
 import { GetAttendanceByEmployeeIdAndDateRangeUseCase } from '../../usecases/getAttendanceByEmployeeIdAndDateRange.usecase';
 import { GetAttendanceByDateRangeUseCase } from '../../usecases/getAttendanceByDateRange.usecase';
+import { GetAllAttendanceUseCase } from '../../usecases/getAllAttendance.usecase';
 
 @Module({
   imports: [DatabaseModule, AttendanceRepositoryModule],
@@ -75,7 +76,7 @@ export class AttendanceGeneralUseCaseProxyModule {
           provide:
             AttendanceGeneralUseCaseProxyModule.GET_ALL_ATTENDANCES_USE_CASE_PROXY,
           useFactory: (attendanceRepository: AttendanceRepository) =>
-            new UseCaseProxy(new UpdateAttendanceUseCase(attendanceRepository)),
+            new UseCaseProxy(new GetAllAttendanceUseCase(attendanceRepository)),
         },
         {
           inject: [AttendanceRepository],

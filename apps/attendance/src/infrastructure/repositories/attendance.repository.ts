@@ -318,11 +318,12 @@ export class AttendanceRepository implements IAttendanceRepository {
       .where(query.where)
       .build();
 
+
     try {
       const result = await this.databaseService.query(builder);
 
-      if (!result || result.length === 0) {
-        throw new NotFoundException('Attendance not found');
+      if (result.length === 0) {
+        return null;
       }
 
       return this.transformQueryResultToAttendanceModel(result[0]);
@@ -420,6 +421,7 @@ export class AttendanceRepository implements IAttendanceRepository {
       .insert(entity)
       .build();
 
+    console.log(builder);
 
     try {
       const result = await this.databaseService.query(builder);
@@ -428,7 +430,23 @@ export class AttendanceRepository implements IAttendanceRepository {
         throw new BadRequestException('Attendance could not be saved');
       }
 
-      return this.transformQueryResultToAttendanceModel(result[0]);
+      console.log(result);
+
+      const attendanceQuery = new QueryBuilder<AttendanceModel>()
+        .from(this.collectionName)
+        .where({ id: entity.id })
+        .build();
+
+      const attendanceResult =
+        await this.databaseService.query(attendanceQuery);
+
+      if (!attendanceResult) {
+        throw new BadRequestException('Attendance could not be saved');
+      }
+
+      console.log(attendanceResult);
+
+      return this.transformQueryResultToAttendanceModel(attendanceResult[0]);
     } catch (error) {
       this.logger.error('Error saving attendance', error.stack);
       throw new BadRequestException('Error saving attendance');

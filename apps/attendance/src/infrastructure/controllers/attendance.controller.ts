@@ -63,9 +63,7 @@ export class AttendanceController {
 
   @MessagePattern('getAllAttendances')
   async getAllAttendances() {
-    const response = await this.getAllAttendancesUseCase
-      .getInstance()
-      .getAllAttendance();
+    const response = await this.getAllAttendancesUseCase.getInstance().getAllAttendance();
 
     return HttpResponse.send('Attendance retrieved successfully', response);
   }
