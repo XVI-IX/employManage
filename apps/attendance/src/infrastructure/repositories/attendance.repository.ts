@@ -318,7 +318,6 @@ export class AttendanceRepository implements IAttendanceRepository {
       .where(query.where)
       .build();
 
-
     try {
       const result = await this.databaseService.query(builder);
 
@@ -401,7 +400,21 @@ export class AttendanceRepository implements IAttendanceRepository {
         throw new BadRequestException('Attendance could not be updated');
       }
 
-      return this.transformQueryResultToAttendanceModel(result[0]);
+      const attendanceQuery = new QueryBuilder<AttendanceModel>()
+        .select([])
+        .from(this.collectionName)
+        .where({ employeeId: id })
+        .andWhere({ date: entity.date })
+        .build();
+
+      const attendanceResult =
+        await this.databaseService.query(attendanceQuery);
+
+      if (!attendanceResult) {
+        throw new BadRequestException('Attendance could not be updated');
+      }
+
+      return this.transformQueryResultToAttendanceModel(attendanceResult[0]);
     } catch (error) {
       this.logger.error('Error updating attendance', error.stack);
       throw new BadRequestException('Error updating attendance');
@@ -421,16 +434,12 @@ export class AttendanceRepository implements IAttendanceRepository {
       .insert(entity)
       .build();
 
-    console.log(builder);
-
     try {
       const result = await this.databaseService.query(builder);
 
       if (!result) {
         throw new BadRequestException('Attendance could not be saved');
       }
-
-      console.log(result);
 
       const attendanceQuery = new QueryBuilder<AttendanceModel>()
         .from(this.collectionName)
@@ -443,8 +452,6 @@ export class AttendanceRepository implements IAttendanceRepository {
       if (!attendanceResult) {
         throw new BadRequestException('Attendance could not be saved');
       }
-
-      console.log(attendanceResult);
 
       return this.transformQueryResultToAttendanceModel(attendanceResult[0]);
     } catch (error) {
