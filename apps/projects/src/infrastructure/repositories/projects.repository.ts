@@ -62,8 +62,29 @@ export class ProjectRepository implements IProjectRepository {
    * @param projectId unique identifier of the project.
    * @returns project details of the project.
    */
-  async getAllProjectAssignees(projectId: string): Promise<ProjectModel> {
-    throw new Error('Method not implemented.');
+  async getAllProjectAssignees(
+    projectId: string,
+  ): Promise<ProjectAssigneesModel[]> {
+    const builder: string = new QueryBuilder<ProjectAssigneesModel>()
+      .select([])
+      .from('project_assignees')
+      .where({
+        projectId,
+      })
+      .build();
+
+    try {
+      const result = await this.databaseService.query(builder);
+
+      if (result[0].length === 0) {
+        throw new BadRequestException('No project assignees found');
+      }
+
+      return this.transformQueryResultToProjectAssigneesModelArray(result[0]);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw error;
+    }
   }
 
   /**
