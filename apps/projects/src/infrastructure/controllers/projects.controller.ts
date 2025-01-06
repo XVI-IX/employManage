@@ -8,6 +8,9 @@ import { HttpResponse } from '@app/common/infrastructure/helpers/response.helper
 import { GetAllProjectsUseCase } from '../../usecase/getAllProjects.usecase';
 import { GetProjectByIdUseCase } from '../../usecase/getProjectById.usecase';
 import { UpdateProjectUseCase } from '../../usecase/updateProject.usecase';
+import { GetProjectsByDepartmentIdUseCase } from '../../usecase/getProjectsByDepartmentId.usecase';
+import { GetAllSupervisorProjectsUseCase } from '../../usecase/getAllSupervisorProjects.usecase';
+import { DeleteProjectUseCase } from '../../usecase/deleteProject.usecase';
 
 @Controller()
 export class ProjectsController {
@@ -22,6 +25,16 @@ export class ProjectsController {
     private readonly getProjectByIdUseCase: UseCaseProxy<GetProjectByIdUseCase>,
     @Inject(ProjectsGeneralUseCaseProxy.UPDATE_PROJECT_USE_CASE_PROXY)
     private readonly updateProjectUseCase: UseCaseProxy<UpdateProjectUseCase>,
+    @Inject(
+      ProjectsGeneralUseCaseProxy.GET_PROJECTS_BY_DEPARTMENT_ID_USE_CASE_PROXY,
+    )
+    private readonly getProjectsByDepartmentIdUseCase: UseCaseProxy<GetProjectsByDepartmentIdUseCase>,
+    @Inject(
+      ProjectsGeneralUseCaseProxy.GET_ALL_SUPERVISOR_PROJECTS_USE_CASE_PROXY,
+    )
+    private readonly getAllSupervisorProjectsUseCase: UseCaseProxy<GetAllSupervisorProjectsUseCase>,
+    @Inject(ProjectsGeneralUseCaseProxy.DELETE_PROJECT_USE_CASE_PROXY)
+    private readonly deleteProjectUseCase: UseCaseProxy<DeleteProjectUseCase>,
   ) {}
 
   @MessagePattern('createProject')
@@ -58,5 +71,32 @@ export class ProjectsController {
       .updateProject(data.projectId, data.data);
 
     return HttpResponse.send('Project updated successfully', response);
+  }
+
+  @MessagePattern('getProjectsByDepartmentId')
+  async getProjectsByDepartmentId(@Payload() data: { departmentId: string }) {
+    const response = await this.getProjectsByDepartmentIdUseCase
+      .getInstance()
+      .getProjectsByDepartmentId(data.departmentId);
+
+    return HttpResponse.send('Projects retrieved successfully', response);
+  }
+
+  @MessagePattern('getSupervisorProjects')
+  async getSupervisorProjects(@Payload() data: { supervisorId: string }) {
+    const response = await this.getAllSupervisorProjectsUseCase
+      .getInstance()
+      .getAllSupervisorProjects(data.supervisorId);
+
+    return HttpResponse.send('Projects retrieved successfully', response);
+  }
+
+  @MessagePattern('deleteProject')
+  async deleteProject(@Payload() data: { projectId: string }) {
+    const response = await this.deleteProjectUseCase
+      .getInstance()
+      .deleteProject(data.projectId);
+
+    return HttpResponse.send('Project deleted successfully', response);
   }
 }

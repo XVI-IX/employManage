@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Inject,
   Param,
@@ -40,6 +41,27 @@ export class ProjectsGatewayController {
     return this.projectsService.send('updateProject', {
       projectId,
       data,
+    });
+  }
+
+  @Get('/departments/:departmentId')
+  async getProjectsByDepartmentId(@Param('departmentId') departmentId: string) {
+    return this.projectsService.send('getProjectsByDepartmentId', {
+      departmentId,
+    });
+  }
+
+  @Get('/supervisors/:supervisorId')
+  async getSupervisorProjects(@Param('supervisorId') supervisorId: string) {
+    return this.projectsService.send('getSupervisorProjects', {
+      supervisorId,
+    });
+  }
+
+  @Delete('/:projectId')
+  async deleteProject(@Param('projectId') projectId: string) {
+    return this.projectsService.send('deleteProject', {
+      projectId,
     });
   }
 }
