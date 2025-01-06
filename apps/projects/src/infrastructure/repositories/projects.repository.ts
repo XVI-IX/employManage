@@ -26,6 +26,80 @@ export class ProjectRepository implements IProjectRepository {
     this.logger = new Logger(ProjectRepository.name);
   }
 
+  async addProjectAssignee(
+    projectId: string,
+    assignee: string,
+  ): Promise<ProjectAssigneesModel> {
+    const builder: string = new QueryBuilder<ProjectAssigneesModel>()
+      .into('project_assignees')
+      .insert({
+        projectId,
+        employeeId: assignee,
+      })
+      .build();
+
+    try {
+      const response = await this.databaseService.query(builder);
+
+      if (response.rowCount === 0) {
+        throw new BadRequestException('Failed to add project assignee');
+      }
+
+      const getProjectAssignee = await this.databaseService.query(
+        new QueryBuilder<ProjectAssigneesModel>()
+          .select([])
+          .from('project_assignees')
+          .where({ projectId })
+          .andWhere({ employeeId: assignee })
+          .build(),
+      );
+
+      return this.transformQueryResultToProjectAssigneesModel(
+        getProjectAssignee[0],
+      );
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw error;
+    }
+  }
+
+  async removeProjectAssignee(
+    projectId: string,
+    assignee: string,
+  ): Promise<ProjectAssigneesModel> {
+    const builder: string = new QueryBuilder<ProjectAssigneesModel>()
+      .from('project_assignees')
+      .delete()
+      .where({
+        projectId,
+        employeeId: assignee,
+      })
+      .build();
+    try {
+      const response = await this.databaseService.query(builder);
+
+      if (response.rowCount === 0) {
+        throw new BadRequestException('Failed to remove project assignee');
+      }
+
+      const getProjectAssignee = await this.databaseService.query(
+        new QueryBuilder<ProjectAssigneesModel>()
+          .select([])
+          .from('project_assignees')
+          .where({ projectId })
+          .andWhere({ employeeId: assignee })
+          .build(),
+      );
+
+      return this.transformQueryResultToProjectAssigneesModel(
+        getProjectAssignee[0],
+      );
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw error;
+    }
+  }
+
   /**
    * @name getProjectsByDepartmentsId
    * @description Get project details by project id.

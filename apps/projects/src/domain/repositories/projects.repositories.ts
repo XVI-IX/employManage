@@ -3,6 +3,14 @@ import { ProjectAssigneesModel, ProjectModel } from '../model';
 
 export interface IProjectRepository extends IBaseRepository<ProjectModel> {
   getProjectsByDepartmentId(departmentId: string): Promise<ProjectModel>;
+  addProjectAssignee(
+    projectId: string,
+    assignee: string,
+  ): Promise<ProjectAssigneesModel>;
+  removeProjectAssignee(
+    projectId: string,
+    assignee: string,
+  ): Promise<ProjectAssigneesModel>;
   getAllProjectAssignees(projectId: string): Promise<ProjectAssigneesModel[]>;
   getAllDueProjects(): Promise<ProjectModel>;
   getAllPendingProjects(): Promise<ProjectModel>;
