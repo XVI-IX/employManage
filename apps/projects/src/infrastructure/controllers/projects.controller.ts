@@ -11,6 +11,10 @@ import { UpdateProjectUseCase } from '../../usecase/updateProject.usecase';
 import { GetProjectsByDepartmentIdUseCase } from '../../usecase/getProjectsByDepartmentId.usecase';
 import { GetAllSupervisorProjectsUseCase } from '../../usecase/getAllSupervisorProjects.usecase';
 import { DeleteProjectUseCase } from '../../usecase/deleteProject.usecase';
+import { getAllCompletedProjectsUseCase } from '../../usecase/getAllCompletedProjects.usecase';
+import { GetAllPendingProjectsUseCase } from '../../usecase/getAllPendingProjects.usecase';
+import { GetAllDueProjectsUseCase } from '../../usecase/getAllDueProjects.usecase';
+import { GetAllProjectAssigneesUseCase } from '../../usecase/getAllProjectAssignees.usecase';
 
 @Controller()
 export class ProjectsController {
@@ -33,6 +37,18 @@ export class ProjectsController {
     private readonly getAllSupervisorProjectsUseCase: UseCaseProxy<GetAllSupervisorProjectsUseCase>,
     @Inject(ProjectsGeneralUseCaseProxy.DELETE_PROJECT_USE_CASE_PROXY)
     private readonly deleteProjectUseCase: UseCaseProxy<DeleteProjectUseCase>,
+    @Inject(
+      ProjectsGeneralUseCaseProxy.GET_ALL_COMPLETED_PROJECTS_USE_CASE_PROXY,
+    )
+    private readonly getAllCompletedProjectsUseCase: UseCaseProxy<getAllCompletedProjectsUseCase>,
+    @Inject(ProjectsGeneralUseCaseProxy.GET_ALL_PENDING_PROJECTS_USE_CASE_PROXY)
+    private readonly getAllPendingProjectsUseCase: UseCaseProxy<GetAllPendingProjectsUseCase>,
+    @Inject(ProjectsGeneralUseCaseProxy.GET_ALL_DUE_PROJECTS_USE_CASE_PROXY)
+    private readonly getAllDueProjectsUseCase: UseCaseProxy<GetAllDueProjectsUseCase>,
+    @Inject(
+      ProjectsGeneralUseCaseProxy.GET_ALL_PROJECT_ASSIGNEES_USE_CASE_PROXY,
+    )
+    private readonly getAllProjectAssigneesUseCase: UseCaseProxy<GetAllProjectAssigneesUseCase>,
   ) {}
 
   @MessagePattern('createProject')
@@ -87,6 +103,45 @@ export class ProjectsController {
       .getAllSupervisorProjects(data.supervisorId);
 
     return HttpResponse.send('Projects retrieved successfully', response);
+  }
+
+  @MessagePattern('getCompletedProjects')
+  async getCompletedProjects() {
+    const response = await this.getAllCompletedProjectsUseCase
+      .getInstance()
+      .getAllCompletedProjects();
+
+    return HttpResponse.send('Projects retrieved successfully', response);
+  }
+
+  @MessagePattern('getPendingProjects')
+  async getPendingProjects() {
+    const response = await this.getAllPendingProjectsUseCase
+      .getInstance()
+      .getAllPendingProjects();
+
+    return HttpResponse.send('Projects retrieved successfully', response);
+  }
+
+  @MessagePattern('getDueProjects')
+  async getDueProjects() {
+    const response = await this.getAllDueProjectsUseCase
+      .getInstance()
+      .getAllDueProjects();
+
+    return HttpResponse.send('Projects retrieved successfully', response);
+  }
+
+  @MessagePattern('getAllProjectAssignees')
+  async getAllProjectAssignees(@Payload() data: { projectId: string }) {
+    const response = await this.getAllProjectAssigneesUseCase
+      .getInstance()
+      .getAllProjectAssignees(data.projectId);
+
+    return HttpResponse.send(
+      'Project assignees retrieved successfully',
+      response,
+    );
   }
 
   @MessagePattern('deleteProject')

@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ProjectModel } from 'apps/projects/src/domain/model';
@@ -24,8 +25,18 @@ export class ProjectsGatewayController {
   }
 
   @Get('/')
-  async getAllProjects() {
-    return this.projectsService.send('getAllProjects', {});
+  async getAllProjects(
+    @Query() query: { completed: boolean; pending: boolean; due: boolean },
+  ) {
+    if (query.completed) {
+      return this.projectsService.send('getCompletedProjects', {});
+    } else if (query.pending) {
+      return this.projectsService.send('getPendingProjects', {});
+    } else if (query.due) {
+      return this.projectsService.send('getDueProjects', {});
+    } else {
+      return this.projectsService.send('getAllProjects', {});
+    }
   }
 
   @Get('/:projectId')
@@ -56,6 +67,11 @@ export class ProjectsGatewayController {
     return this.projectsService.send('getSupervisorProjects', {
       supervisorId,
     });
+  }
+
+  @Get('/:projectId/assignees')
+  async getAllProjectAssignees(@Param('projectId') projectId: string) {
+    return this.projectsService.send('getAllProjectAssignees', { projectId });
   }
 
   @Delete('/:projectId')
