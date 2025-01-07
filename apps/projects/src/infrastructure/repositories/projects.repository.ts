@@ -108,11 +108,11 @@ export class ProjectRepository implements IProjectRepository {
    * @returns project details of the department.
    */
   async getProjectsByDepartmentId(departmentId: string): Promise<ProjectModel> {
-    const builder: string = new QueryBuilder<ProjectModel>()
+    const builder: string = new QueryBuilder<ProjectModel[]>()
       .select([])
       .from(this.collectionName)
       .where({
-        departmentId,
+        departmentId: departmentId,
       })
       .build();
     try {
@@ -122,7 +122,7 @@ export class ProjectRepository implements IProjectRepository {
         throw new BadRequestException('No project found');
       }
 
-      return this.transformQueryResultToProjectModel(result[0]);
+      return this.transformQueryResultToProjectModelArray(result);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw error;
@@ -289,11 +289,11 @@ export class ProjectRepository implements IProjectRepository {
     try {
       const response = await this.databaseService.query(builder);
 
-      if (response[0].length === 0) {
-        throw new BadRequestException('No project found');
+      if (!response) {
+        throw new BadRequestException('Projects could not be retrieved');
       }
 
-      return this.transformQueryResultToProjectModelArray(response[0]);
+      return this.transformQueryResultToProjectModelArray(response);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw error;
@@ -388,27 +388,36 @@ export class ProjectRepository implements IProjectRepository {
       .insert(entity)
       .build();
 
-    try {
-      const checkProjectExists = await this.findOne({
-        where: {
-          name: entity.name,
-          departmentId: entity.departmentId,
-        },
-      });
+    const checkProjectExistsQuery: string = new QueryBuilder<ProjectModel>()
+      .select([])
+      .from(this.collectionName)
+      .where({
+        name: entity.name,
+      })
+      .andWhere({
+        departmentId: entity.departmentId,
+      })
+      .build();
 
-      if (checkProjectExists) {
+    try {
+      const checkProjectExists = await this.databaseService.query(
+        checkProjectExistsQuery,
+      );
+
+      if (checkProjectExists.length > 0) {
         throw new ConflictException('Project already exists');
       }
 
       const result = await this.databaseService.query(builder);
 
-      if (result.rowCount === 0) {
+      if (!result) {
         throw new BadRequestException('Failed to create project');
       }
 
       const getProject = await this.findOne({
         where: {
-          id: result.rows[0].id,
+          name: entity.name,
+          departmentId: entity.departmentId,
         },
       });
 

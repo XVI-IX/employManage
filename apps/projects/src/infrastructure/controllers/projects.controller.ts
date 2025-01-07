@@ -19,9 +19,7 @@ export class ProjectsController {
     private readonly createProjectUseCase: UseCaseProxy<CreateProjectUseCase>,
     @Inject(ProjectsGeneralUseCaseProxy.GET_ALL_PROJECTS_USE_CASE_PROXY)
     private readonly getAllProjectUseCase: UseCaseProxy<GetAllProjectsUseCase>,
-    @Inject(
-      ProjectsGeneralUseCaseProxy.GET_PROJECTS_BY_DEPARTMENT_ID_USE_CASE_PROXY,
-    )
+    @Inject(ProjectsGeneralUseCaseProxy.GET_PROJECT_BY_ID_USE_CASE_PROXY)
     private readonly getProjectByIdUseCase: UseCaseProxy<GetProjectByIdUseCase>,
     @Inject(ProjectsGeneralUseCaseProxy.UPDATE_PROJECT_USE_CASE_PROXY)
     private readonly updateProjectUseCase: UseCaseProxy<UpdateProjectUseCase>,
