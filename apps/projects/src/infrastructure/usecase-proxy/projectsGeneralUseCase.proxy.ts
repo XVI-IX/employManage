@@ -18,6 +18,8 @@ import { GetProjectsByDepartmentIdUseCase } from '../../usecase/getProjectsByDep
 import { GetAllProjectsUseCase } from '../../usecase/getAllProjects.usecase';
 import { GetAllPendingProjectsUseCase } from '../../usecase/getAllPendingProjects.usecase';
 import { UpdateProjectUseCase } from '../../usecase/updateProject.usecase';
+import { AddProjectAssigneeUseCase } from '../../usecase/addProjectAssignee.usecase';
+import { RemoveProjectAssigneeUseCase } from '../../usecase/deleteProjectAssignee.usecase';
 
 @Module({
   imports: [
@@ -45,6 +47,10 @@ export class ProjectsGeneralUseCaseProxy {
     'GET_ALL_COMPLETED_PROJECTS_USE_CASE_PROXY';
   static GET_ALL_SUPERVISOR_PROJECTS_USE_CASE_PROXY =
     'GET_ALL_SUPERVISOR_PROJECTS_USE_CASE_PROXY';
+  static ADD_PROJECT_ASSIGNEE_USE_CASE_PROXY =
+    'ADD_PROJECT_ASSIGNEE_USE_CASE_PROXY';
+  static REMOVE_PROJECT_ASSIGNEE_USE_CASE_PROXY =
+    'REMOVE_PROJECT_ASSIGNEE_USE_CASE_PROXY';
 
   static register(): DynamicModule {
     return {
@@ -149,6 +155,30 @@ export class ProjectsGeneralUseCaseProxy {
           useFactory: (projectRepository: ProjectRepository) =>
             new UseCaseProxy(new UpdateProjectUseCase(projectRepository)),
         },
+        {
+          inject: [ProjectRepository, EmployeeRepository],
+          provide:
+            ProjectsGeneralUseCaseProxy.ADD_PROJECT_ASSIGNEE_USE_CASE_PROXY,
+          useFactory: (
+            projectRepository: ProjectRepository,
+            employeeRepository: EmployeeRepository,
+          ) =>
+            new UseCaseProxy(
+              new AddProjectAssigneeUseCase(
+                projectRepository,
+                employeeRepository,
+              ),
+            ),
+        },
+        {
+          inject: [ProjectRepository],
+          provide:
+            ProjectsGeneralUseCaseProxy.REMOVE_PROJECT_ASSIGNEE_USE_CASE_PROXY,
+          useFactory: (projectRepository: ProjectRepository) =>
+            new UseCaseProxy(
+              new RemoveProjectAssigneeUseCase(projectRepository),
+            ),
+        },
       ],
       exports: [
         ProjectsGeneralUseCaseProxy.CREATE_PROJECT_USE_CASE_PROXY,
@@ -162,6 +192,8 @@ export class ProjectsGeneralUseCaseProxy {
         ProjectsGeneralUseCaseProxy.GET_ALL_PENDING_PROJECTS_USE_CASE_PROXY,
         ProjectsGeneralUseCaseProxy.GET_ALL_COMPLETED_PROJECTS_USE_CASE_PROXY,
         ProjectsGeneralUseCaseProxy.GET_ALL_SUPERVISOR_PROJECTS_USE_CASE_PROXY,
+        ProjectsGeneralUseCaseProxy.ADD_PROJECT_ASSIGNEE_USE_CASE_PROXY,
+        ProjectsGeneralUseCaseProxy.REMOVE_PROJECT_ASSIGNEE_USE_CASE_PROXY,
       ],
     };
   }

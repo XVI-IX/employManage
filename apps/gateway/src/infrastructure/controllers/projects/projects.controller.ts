@@ -74,6 +74,28 @@ export class ProjectsGatewayController {
     return this.projectsService.send('getAllProjectAssignees', { projectId });
   }
 
+  @Put('/:projectId/assignees/:assigneeId')
+  async addProjectAssignee(
+    @Param('projectId') projectId: string,
+    @Param('assigneeId') assigneeId: string,
+  ) {
+    return this.projectsService.send('addProjectAssignee', {
+      projectId,
+      assigneeId,
+    });
+  }
+
+  @Delete('/:projectId/assignees/:assigneeId')
+  async removeProjectAssignee(
+    @Param('projectId') projectId: string,
+    @Param('assigneeId') assigneeId: string,
+  ) {
+    return this.projectsService.send('removeProjectAssignee', {
+      projectId,
+      assigneeId,
+    });
+  }
+
   @Delete('/:projectId')
   async deleteProject(@Param('projectId') projectId: string) {
     return this.projectsService.send('deleteProject', {

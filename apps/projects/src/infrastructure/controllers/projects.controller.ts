@@ -15,6 +15,8 @@ import { getAllCompletedProjectsUseCase } from '../../usecase/getAllCompletedPro
 import { GetAllPendingProjectsUseCase } from '../../usecase/getAllPendingProjects.usecase';
 import { GetAllDueProjectsUseCase } from '../../usecase/getAllDueProjects.usecase';
 import { GetAllProjectAssigneesUseCase } from '../../usecase/getAllProjectAssignees.usecase';
+import { AddProjectAssigneeUseCase } from '../../usecase/addProjectAssignee.usecase';
+import { RemoveProjectAssigneeUseCase } from '../../usecase/deleteProjectAssignee.usecase';
 
 @Controller()
 export class ProjectsController {
@@ -49,6 +51,10 @@ export class ProjectsController {
       ProjectsGeneralUseCaseProxy.GET_ALL_PROJECT_ASSIGNEES_USE_CASE_PROXY,
     )
     private readonly getAllProjectAssigneesUseCase: UseCaseProxy<GetAllProjectAssigneesUseCase>,
+    @Inject(ProjectsGeneralUseCaseProxy.ADD_PROJECT_ASSIGNEE_USE_CASE_PROXY)
+    private readonly addProjectAssigneeUseCase: UseCaseProxy<AddProjectAssigneeUseCase>,
+    @Inject(ProjectsGeneralUseCaseProxy.REMOVE_PROJECT_ASSIGNEE_USE_CASE_PROXY)
+    private readonly removeProjectAssigneeUseCase: UseCaseProxy<RemoveProjectAssigneeUseCase>,
   ) {}
 
   @MessagePattern('createProject')
@@ -130,6 +136,17 @@ export class ProjectsController {
       .getAllDueProjects();
 
     return HttpResponse.send('Projects retrieved successfully', response);
+  }
+
+  @MessagePattern('addProjectAssignee')
+  async addProjectAssignee(
+    @Payload() data: { projectId: string; assigneeId: string },
+  ) {
+    const response = await this.addProjectAssigneeUseCase
+      .getInstance()
+      .addProjectAssignee(data.projectId, data.assigneeId);
+
+    return HttpResponse.send('Assignee added successfully', response);
   }
 
   @MessagePattern('getAllProjectAssignees')

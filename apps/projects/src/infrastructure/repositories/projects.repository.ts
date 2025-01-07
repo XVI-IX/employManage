@@ -41,7 +41,7 @@ export class ProjectRepository implements IProjectRepository {
     try {
       const response = await this.databaseService.query(builder);
 
-      if (response.rowCount === 0) {
+      if (!response) {
         throw new BadRequestException('Failed to add project assignee');
       }
 
@@ -54,8 +54,10 @@ export class ProjectRepository implements IProjectRepository {
           .build(),
       );
 
+      console.log(getProjectAssignee);
+
       return this.transformQueryResultToProjectAssigneesModel(
-        getProjectAssignee[0],
+        getProjectAssignee,
       );
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -107,8 +109,10 @@ export class ProjectRepository implements IProjectRepository {
    * @param departmentId Unique identifier of the department.
    * @returns project details of the department.
    */
-  async getProjectsByDepartmentId(departmentId: string): Promise<ProjectModel> {
-    const builder: string = new QueryBuilder<ProjectModel[]>()
+  async getProjectsByDepartmentId(
+    departmentId: string,
+  ): Promise<ProjectModel[]> {
+    const builder: string = new QueryBuilder<ProjectModel>()
       .select([])
       .from(this.collectionName)
       .where({
@@ -150,11 +154,11 @@ export class ProjectRepository implements IProjectRepository {
     try {
       const result = await this.databaseService.query(builder);
 
-      if (result[0].length === 0) {
-        throw new BadRequestException('No project assignees found');
+      if (!result) {
+        throw new BadRequestException('Projects could not be retrieved');
       }
 
-      return this.transformQueryResultToProjectAssigneesModelArray(result[0]);
+      return this.transformQueryResultToProjectAssigneesModelArray(result);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw error;
@@ -249,8 +253,10 @@ export class ProjectRepository implements IProjectRepository {
    * @param supervisorId unique employee id of the supervisor
    * @returns all projects assigned to the supervisor
    */
-  async getAllSupervisorProjects(supervisorId: string): Promise<ProjectModel> {
-    const builder: string = new QueryBuilder<ProjectModel[]>()
+  async getAllSupervisorProjects(
+    supervisorId: string,
+  ): Promise<ProjectModel[]> {
+    const builder: string = new QueryBuilder<ProjectModel>()
       .select([])
       .from(this.collectionName)
       .where({
