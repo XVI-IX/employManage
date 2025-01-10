@@ -54,8 +54,6 @@ export class ProjectRepository implements IProjectRepository {
           .build(),
       );
 
-      console.log(getProjectAssignee);
-
       return this.transformQueryResultToProjectAssigneesModel(
         getProjectAssignee,
       );

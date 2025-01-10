@@ -149,6 +149,17 @@ export class ProjectsController {
     return HttpResponse.send('Assignee added successfully', response);
   }
 
+  @MessagePattern('removeProjectAssignee')
+  async removeProjectAssignee(
+    @Payload() data: { projectId: string; assigneeId: string },
+  ) {
+    const response = await this.removeProjectAssigneeUseCase
+      .getInstance()
+      .removeProjectAssignee(data.projectId, data.assigneeId);
+
+    return HttpResponse.send('Assignee removed successfully', response);
+  }
+
   @MessagePattern('getAllProjectAssignees')
   async getAllProjectAssignees(@Payload() data: { projectId: string }) {
     const response = await this.getAllProjectAssigneesUseCase
