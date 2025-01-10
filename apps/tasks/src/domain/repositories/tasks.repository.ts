@@ -43,34 +43,4 @@ export interface ITaskRepository extends IBaseRepository<TasksModel> {
     endDate: Date,
     name: string,
   ): Promise<TasksModel[]>;
-  findTasksByProjectIdAndEmployeeIdAndStatusAndDateRangeAndNameAndDescription(
-    projectId: string,
-    employeeId: string,
-    status: string,
-    startDate: Date,
-    endDate: Date,
-    name: string,
-    description: string,
-  ): Promise<TasksModel[]>;
-  findTasksByProjectIdAndEmployeeIdAndStatusAndDateRangeAndNameAndDescriptionAndCreatedAt(
-    projectId: string,
-    employeeId: string,
-    status: string,
-    startDate: Date,
-    endDate: Date,
-    name: string,
-    description: string,
-    createdAt: Date,
-  ): Promise<TasksModel[]>;
-  findTasksByProjectIdAndEmployeeIdAndStatusAndDateRangeAndNameAndDescriptionAndCreatedAtAndUpdatedAt(
-    projectId: string,
-    employeeId: string,
-    status: string,
-    startDate: Date,
-    endDate: Date,
-    name: string,
-    description: string,
-    createdAt: Date,
-    updatedAt: Date,
-  ): Promise<TasksModel[]>;
 }

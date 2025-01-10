@@ -60,6 +60,10 @@ class EnvironmentConfig implements IEnvironmentInterface {
     return env.get('EMPLOYEE_SERVICE_PORT').asInt();
   }
 
+  getTaskServicePort(): number {
+    return env.get('TASK_SERVICE_PORT').asInt();
+  }
+
   getDepartmentServicePort(): number {
     return env.get('DEPARTMENT_SERVICE_PORT').asInt();
   }
