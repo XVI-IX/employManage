@@ -2,7 +2,7 @@ import { IEmployeeRepository } from 'apps/employees/src/domain/repositories';
 import { TasksModel } from '../domain/models/tasks.model';
 import { ITaskRepository } from '../domain/repositories/tasks.repository';
 import { CreateTaskInput } from '../infrastructure/common/schemas/tasks.schema';
-import { IDepartmentRepository } from 'apps/departments/src/domain/repositories';
+// import { IDepartmentRepository } from 'apps/departments/src/domain/repositories';
 import { IProjectRepository } from 'apps/projects/src/domain/repositories';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 
