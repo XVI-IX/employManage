@@ -26,6 +26,80 @@ export class ProjectRepository implements IProjectRepository {
     this.logger = new Logger(ProjectRepository.name);
   }
 
+  async addProjectAssignee(
+    projectId: string,
+    assignee: string,
+  ): Promise<ProjectAssigneesModel> {
+    const builder: string = new QueryBuilder<ProjectAssigneesModel>()
+      .into('project_assignees')
+      .insert({
+        projectId,
+        employeeId: assignee,
+      })
+      .build();
+
+    try {
+      const response = await this.databaseService.query(builder);
+
+      if (!response) {
+        throw new BadRequestException('Failed to add project assignee');
+      }
+
+      const getProjectAssignee = await this.databaseService.query(
+        new QueryBuilder<ProjectAssigneesModel>()
+          .select([])
+          .from('project_assignees')
+          .where({ projectId })
+          .andWhere({ employeeId: assignee })
+          .build(),
+      );
+
+      return this.transformQueryResultToProjectAssigneesModel(
+        getProjectAssignee,
+      );
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw error;
+    }
+  }
+
+  async removeProjectAssignee(
+    projectId: string,
+    assignee: string,
+  ): Promise<ProjectAssigneesModel> {
+    const builder: string = new QueryBuilder<ProjectAssigneesModel>()
+      .from('project_assignees')
+      .delete()
+      .where({
+        projectId,
+        employeeId: assignee,
+      })
+      .build();
+    try {
+      const response = await this.databaseService.query(builder);
+
+      if (response.rowCount === 0) {
+        throw new BadRequestException('Failed to remove project assignee');
+      }
+
+      const getProjectAssignee = await this.databaseService.query(
+        new QueryBuilder<ProjectAssigneesModel>()
+          .select([])
+          .from('project_assignees')
+          .where({ projectId })
+          .andWhere({ employeeId: assignee })
+          .build(),
+      );
+
+      return this.transformQueryResultToProjectAssigneesModel(
+        getProjectAssignee[0],
+      );
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw error;
+    }
+  }
+
   /**
    * @name getProjectsByDepartmentsId
    * @description Get project details by project id.
@@ -33,12 +107,14 @@ export class ProjectRepository implements IProjectRepository {
    * @param departmentId Unique identifier of the department.
    * @returns project details of the department.
    */
-  async getProjectsByDepartmentId(departmentId: string): Promise<ProjectModel> {
+  async getProjectsByDepartmentId(
+    departmentId: string,
+  ): Promise<ProjectModel[]> {
     const builder: string = new QueryBuilder<ProjectModel>()
       .select([])
       .from(this.collectionName)
       .where({
-        departmentId,
+        departmentId: departmentId,
       })
       .build();
     try {
@@ -48,7 +124,7 @@ export class ProjectRepository implements IProjectRepository {
         throw new BadRequestException('No project found');
       }
 
-      return this.transformQueryResultToProjectModel(result[0]);
+      return this.transformQueryResultToProjectModelArray(result);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw error;
@@ -62,8 +138,29 @@ export class ProjectRepository implements IProjectRepository {
    * @param projectId unique identifier of the project.
    * @returns project details of the project.
    */
-  async getAllProjectAssignees(projectId: string): Promise<ProjectModel> {
-    throw new Error('Method not implemented.');
+  async getAllProjectAssignees(
+    projectId: string,
+  ): Promise<ProjectAssigneesModel[]> {
+    const builder: string = new QueryBuilder<ProjectAssigneesModel>()
+      .select([])
+      .from('project_assignees')
+      .where({
+        projectId,
+      })
+      .build();
+
+    try {
+      const result = await this.databaseService.query(builder);
+
+      if (!result) {
+        throw new BadRequestException('Projects could not be retrieved');
+      }
+
+      return this.transformQueryResultToProjectAssigneesModelArray(result);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw error;
+    }
   }
 
   /**
@@ -73,17 +170,17 @@ export class ProjectRepository implements IProjectRepository {
    * @returns all due projects.
    *
    */
-  async getAllDueProjects(): Promise<ProjectModel> {
-    const builder: string = `SELECT * FROM ${this.collectionName} WHERE end_date < NOW() AND status = 'pending';`;
+  async getAllDueProjects(): Promise<ProjectModel[]> {
+    const builder: string = `SELECT * FROM ${this.collectionName} WHERE endDate < NOW() AND status = 'pending';`;
 
     try {
       const result = await this.databaseService.query(builder);
 
-      if (result[0].length === 0) {
-        throw new BadRequestException('No project found');
+      if (!result) {
+        throw new BadRequestException('Projects could not be retrieved');
       }
 
-      return this.transformQueryResultToProjectModel(result[0]);
+      return this.transformQueryResultToProjectModelArray(result);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw error;
@@ -96,7 +193,7 @@ export class ProjectRepository implements IProjectRepository {
    *
    * @returns all pending projects.
    */
-  async getAllPendingProjects(): Promise<ProjectModel> {
+  async getAllPendingProjects(): Promise<ProjectModel[]> {
     const builder = new QueryBuilder<ProjectModel>()
       .from(this.collectionName)
       .select([])
@@ -108,11 +205,11 @@ export class ProjectRepository implements IProjectRepository {
     try {
       const results = await this.databaseService.query(builder);
 
-      if (results[0].length === 0) {
-        throw new BadRequestException('No pending project found');
+      if (!results) {
+        throw new BadRequestException('Projects could not be retrieved');
       }
 
-      return this.transformQueryResultToProjectModel(results[0]);
+      return this.transformQueryResultToProjectModelArray(results);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw error;
@@ -125,7 +222,7 @@ export class ProjectRepository implements IProjectRepository {
    *
    * @returns all completed projects.
    */
-  async getAllCompletedProjects(): Promise<ProjectModel> {
+  async getAllCompletedProjects(): Promise<ProjectModel[]> {
     const builder: string = new QueryBuilder<ProjectModel>()
       .select([])
       .from(this.collectionName)
@@ -136,11 +233,11 @@ export class ProjectRepository implements IProjectRepository {
     try {
       const result = await this.databaseService.query(builder);
 
-      if (result[0].length === 0) {
-        throw new BadRequestException('No project found');
+      if (!result) {
+        throw new BadRequestException('Projects could not be retrieved.');
       }
 
-      return this.transformQueryResultToProjectModel(result[0]);
+      return this.transformQueryResultToProjectModelArray(result);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw error;
@@ -154,22 +251,24 @@ export class ProjectRepository implements IProjectRepository {
    * @param supervisorId unique employee id of the supervisor
    * @returns all projects assigned to the supervisor
    */
-  async getAllSupervisorProjects(supervisorId: string): Promise<ProjectModel> {
+  async getAllSupervisorProjects(
+    supervisorId: string,
+  ): Promise<ProjectModel[]> {
     const builder: string = new QueryBuilder<ProjectModel>()
       .select([])
       .from(this.collectionName)
       .where({
-        supervisorId,
+        supervisorId: supervisorId,
       })
       .build();
     try {
       const result = await this.databaseService.query(builder);
 
-      if (result[0].length === 0) {
-        throw new BadRequestException('No project found');
+      if (!result) {
+        throw new BadRequestException('Projects could not be retrieved');
       }
 
-      return this.transformQueryResultToProjectModel(result[0]);
+      return this.transformQueryResultToProjectModelArray(result);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw error;
@@ -194,11 +293,11 @@ export class ProjectRepository implements IProjectRepository {
     try {
       const response = await this.databaseService.query(builder);
 
-      if (response[0].length === 0) {
-        throw new BadRequestException('No project found');
+      if (!response) {
+        throw new BadRequestException('Projects could not be retrieved');
       }
 
-      return this.transformQueryResultToProjectModelArray(response[0]);
+      return this.transformQueryResultToProjectModelArray(response);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw error;
@@ -293,27 +392,36 @@ export class ProjectRepository implements IProjectRepository {
       .insert(entity)
       .build();
 
-    try {
-      const checkProjectExists = await this.findOne({
-        where: {
-          name: entity.name,
-          departmentId: entity.departmentId,
-        },
-      });
+    const checkProjectExistsQuery: string = new QueryBuilder<ProjectModel>()
+      .select([])
+      .from(this.collectionName)
+      .where({
+        name: entity.name,
+      })
+      .andWhere({
+        departmentId: entity.departmentId,
+      })
+      .build();
 
-      if (checkProjectExists) {
+    try {
+      const checkProjectExists = await this.databaseService.query(
+        checkProjectExistsQuery,
+      );
+
+      if (checkProjectExists.length > 0) {
         throw new ConflictException('Project already exists');
       }
 
       const result = await this.databaseService.query(builder);
 
-      if (result.rowCount === 0) {
+      if (!result) {
         throw new BadRequestException('Failed to create project');
       }
 
       const getProject = await this.findOne({
         where: {
-          id: result.rows[0].id,
+          name: entity.name,
+          departmentId: entity.departmentId,
         },
       });
 

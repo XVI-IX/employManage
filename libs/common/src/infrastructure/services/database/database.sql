@@ -87,4 +87,6 @@ CREATE TABLE TASKS (
 
 )
 
+ALTER TABLE Projects ADD COLUMN status VARCHAR(50) NOT NULL DEFAULT 'pending';
+
   -- FOREIGN KEY (departmentId) REFERENCES Department(id)
