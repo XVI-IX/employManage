@@ -46,7 +46,7 @@ export class TaskRepository implements ITaskRepository {
         );
       }
 
-      return this.transformQueryResultToTaskModel(result);
+      return this.transformQueryResultToTaskModelArray(result);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw error;
@@ -385,7 +385,7 @@ export class TaskRepository implements ITaskRepository {
         throw new BadRequestException('Task could not be deleted');
       }
 
-      return this.transformQueryResultToTaskModel(result);
+      return result;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw error;
@@ -411,14 +411,14 @@ export class TaskRepository implements ITaskRepository {
     } catch (error) {}
   }
 
-  private transformQueryResultToTaskModel(row: any): TaskModel {
+  private transformQueryResultToTaskModel(row: any): TasksModel {
     return {
       id: row.id,
       projectId: row.projectId,
       employeeId: row.employeeId,
       name: row.name,
       description: row.description,
-      startDare: row.startDate,
+      startDate: row.startDate,
       endDate: row.endDate,
       status: row.status,
       createdAt: row.createdAt,
