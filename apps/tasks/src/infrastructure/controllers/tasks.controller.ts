@@ -21,6 +21,7 @@ export class TasksController {
     private readonly createTaskUseCase: UseCaseProxy<CreateTaskUseCase>,
     @Inject(TasksGeneralUsecaseProxyModule.GET_ALL_TASKS_USE_CASE_PROXY)
     private readonly getAllTasksUseCase: UseCaseProxy<GetAllTasksUseCase>,
+    @Inject(TasksGeneralUsecaseProxyModule.GET_TASK_BY_ID_USE_CASE_PROXY)
     private readonly getTaskByIdUseCase: UseCaseProxy<GetTaskByIdUseCase>,
     @Inject(TasksGeneralUsecaseProxyModule.UPDATE_TASK_USE_CASE_PROXY)
     private readonly updateTaskUseCase: UseCaseProxy<UpdateTaskUseCase>,
@@ -30,15 +31,15 @@ export class TasksController {
       TasksGeneralUsecaseProxyModule.GET_TASKS_BY_PROJECT_ID_USE_CASE_PROXY,
     )
     private readonly getTasksByProjectIdUseCase: UseCaseProxy<GetTaskByProjectIdUseCase>,
-    // @Inject(TasksGeneralUsecaseProxyModule.GET_TASKS_BY_DEPARTMENT_ID_USE_CASE_PROXY) private readonly getTasksByDepartmentIdUseCase: UseCaseProxy<GetTask>,
-    @Inject(
-      TasksGeneralUsecaseProxyModule.GET_TASKS_BY_PROJECT_ID_AND_EMPLOYEE_ID_AND_STATUS_USE_CASE_PROXY,
-    )
-    private readonly getTasksByProjectIdAndEmployeeIdAndStatusUseCase: UseCaseProxy<GetTasksByProjectIdAndStatus>,
-    @Inject(
-      TasksGeneralUsecaseProxyModule.GET_TASKS_BY_EMPLOYEE_ID_USE_CASE_PROXY,
-    )
-    private readonly getTasksByEmployeeIdUseCase: UseCaseProxy<GetTasksByEmployeeId>,
+    // // @Inject(TasksGeneralUsecaseProxyModule.GET_TASKS_BY_DEPARTMENT_ID_USE_CASE_PROXY) private readonly getTasksByDepartmentIdUseCase: UseCaseProxy<GetTask>,
+    // @Inject(
+    //   TasksGeneralUsecaseProxyModule.GET_TASKS_BY_PROJECT_ID_AND_EMPLOYEE_ID_AND_STATUS_USE_CASE_PROXY,
+    // )
+    // private readonly getTasksByProjectIdAndEmployeeIdAndStatusUseCase: UseCaseProxy<GetTasksByProjectIdAndStatus>,
+    // @Inject(
+    //   TasksGeneralUsecaseProxyModule.GET_TASKS_BY_EMPLOYEE_ID_USE_CASE_PROXY,
+    // )
+    // private readonly getTasksByEmployeeIdUseCase: UseCaseProxy<GetTasksByEmployeeId>,
   ) {}
 
   @MessagePattern('createTask')
