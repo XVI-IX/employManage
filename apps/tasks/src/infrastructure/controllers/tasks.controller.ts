@@ -13,6 +13,7 @@ import { DeleteTaskUseCase } from '../../usecases/deleteTasks.usecase';
 import { GetTaskByProjectIdUseCase } from '../../usecases/getTaskByProjectId.usecase';
 import { GetTasksByProjectIdAndStatus } from '../../usecases/getTasksByProjectIdAndStatus.usecase';
 import { GetTasksByEmployeeId } from '../../usecases/getTasksByEmployeeId.usecase';
+import { GetTaskByProjectIdAndEmployeeIdAndStatusUseCase } from '../../usecases/getTaskByProjectIdAndEmployeeIdAndStatus.usecase';
 
 @Controller()
 export class TasksController {
@@ -32,14 +33,14 @@ export class TasksController {
     )
     private readonly getTasksByProjectIdUseCase: UseCaseProxy<GetTaskByProjectIdUseCase>,
     // // @Inject(TasksGeneralUsecaseProxyModule.GET_TASKS_BY_DEPARTMENT_ID_USE_CASE_PROXY) private readonly getTasksByDepartmentIdUseCase: UseCaseProxy<GetTask>,
-    // @Inject(
-    //   TasksGeneralUsecaseProxyModule.GET_TASKS_BY_PROJECT_ID_AND_EMPLOYEE_ID_AND_STATUS_USE_CASE_PROXY,
-    // )
-    // private readonly getTasksByProjectIdAndEmployeeIdAndStatusUseCase: UseCaseProxy<GetTasksByProjectIdAndStatus>,
-    // @Inject(
-    //   TasksGeneralUsecaseProxyModule.GET_TASKS_BY_EMPLOYEE_ID_USE_CASE_PROXY,
-    // )
-    // private readonly getTasksByEmployeeIdUseCase: UseCaseProxy<GetTasksByEmployeeId>,
+    @Inject(
+      TasksGeneralUsecaseProxyModule.GET_TASKS_BY_PROJECT_ID_AND_EMPLOYEE_ID_AND_STATUS_USE_CASE_PROXY,
+    )
+    private readonly getTasksByProjectIdAndEmployeeIdAndStatusUseCase: UseCaseProxy<GetTaskByProjectIdAndEmployeeIdAndStatusUseCase>,
+    @Inject(
+      TasksGeneralUsecaseProxyModule.GET_TASKS_BY_EMPLOYEE_ID_USE_CASE_PROXY,
+    )
+    private readonly getTasksByEmployeeIdUseCase: UseCaseProxy<GetTasksByEmployeeId>,
   ) {}
 
   @MessagePattern('createTask')

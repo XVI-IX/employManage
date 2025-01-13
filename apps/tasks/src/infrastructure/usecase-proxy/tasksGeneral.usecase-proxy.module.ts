@@ -18,6 +18,7 @@ import { DepartmentRepositoryModule } from 'apps/departments/src/infrastructure/
 import { DeleteTaskUseCase } from '../../usecases/deleteTasks.usecase';
 import { GetTasksByEmployeeId } from '../../usecases/getTasksByEmployeeId.usecase';
 import { GetTasksByProjectIdAndEmployeeIdUseCase } from '../../usecases/getTasksByEmployeeIdAndProjectId.usecase';
+import { GetTaskByProjectIdAndEmployeeIdAndStatusUseCase } from '../../usecases/getTaskByProjectIdAndEmployeeIdAndStatus.usecase';
 
 @Module({
   imports: [
@@ -51,6 +52,9 @@ export class TasksGeneralUsecaseProxyModule {
     return {
       module: TasksGeneralUsecaseProxyModule,
       providers: [
+        /**
+         * CreateTaskUseCase
+         */
         {
           inject: [TaskRepository],
           provide: TasksGeneralUsecaseProxyModule.CREATE_TASK_USE_CASE_PROXY,
@@ -67,24 +71,36 @@ export class TasksGeneralUsecaseProxyModule {
               ),
             ),
         },
+        /**
+         * GetAllTasksUseCase
+         */
         {
           inject: [TaskRepository],
           provide: TasksGeneralUsecaseProxyModule.GET_ALL_TASKS_USE_CASE_PROXY,
           useFactory: (taskRepository: TaskRepository) =>
             new UseCaseProxy(new GetAllTasksUseCase(taskRepository)),
         },
+        /**
+         * GetTaskByIdUseCase
+         */
         {
           inject: [TaskRepository],
           provide: TasksGeneralUsecaseProxyModule.GET_TASK_BY_ID_USE_CASE_PROXY,
           useFactory: (taskRepository: TaskRepository) =>
             new UseCaseProxy(new GetTaskByIdUseCase(taskRepository)),
         },
+        /**
+         * UpdateTaskUseCase
+         */
         {
           inject: [TaskRepository],
           provide: TasksGeneralUsecaseProxyModule.UPDATE_TASK_USE_CASE_PROXY,
           useFactory: (taskRepository: TaskRepository) =>
             new UseCaseProxy(new UpdateTaskUseCase(taskRepository)),
         },
+        /**
+         * DeleteTaskUseCase
+         */
         {
           inject: [TaskRepository],
           provide: TasksGeneralUsecaseProxyModule.DELETE_TASK_USE_CASE_PROXY,
@@ -103,11 +119,17 @@ export class TasksGeneralUsecaseProxyModule {
           useFactory: (taskRepository: TaskRepository) =>
             new UseCaseProxy(new GetTaskByProjectIdUseCase(taskRepository)),
         },
-        // {
-        //   inject: [TaskRepository],
-        //   provide: TasksGeneralUsecaseProxyModule.GET_TASKS_BY_PROJECT_ID_AND_EMPLOYEE_ID_AND_STATUS_USE_CASE_PROXY,
-        //   useFactory: (taskRepository: TaskRepository) => new UseCaseProxy(new GetTasksByProjectIdAndEmployeeIdAndStatusUseCase(taskRepository))
-        // },
+        {
+          inject: [TaskRepository],
+          provide:
+            TasksGeneralUsecaseProxyModule.GET_TASKS_BY_PROJECT_ID_AND_EMPLOYEE_ID_AND_STATUS_USE_CASE_PROXY,
+          useFactory: (taskRepository: TaskRepository) =>
+            new UseCaseProxy(
+              new GetTaskByProjectIdAndEmployeeIdAndStatusUseCase(
+                taskRepository,
+              ),
+            ),
+        },
         {
           inject: [TaskRepository],
           provide:
@@ -140,7 +162,7 @@ export class TasksGeneralUsecaseProxyModule {
         TasksGeneralUsecaseProxyModule.DELETE_TASK_USE_CASE_PROXY,
         // TasksGeneralUsecaseProxyModule.GET_TASKS_BY_DEPARTMENT_ID_USE_CASE_PROXY,
         TasksGeneralUsecaseProxyModule.GET_TASKS_BY_PROJECT_ID_USE_CASE_PROXY,
-        // TasksGeneralUsecaseProxyModule.GET_TASKS_BY_PROJECT_ID_AND_EMPLOYEE_ID_AND_STATUS_USE_CASE_PROXY,
+        TasksGeneralUsecaseProxyModule.GET_TASKS_BY_PROJECT_ID_AND_EMPLOYEE_ID_AND_STATUS_USE_CASE_PROXY,
         TasksGeneralUsecaseProxyModule.GET_TASKS_BY_EMPLOYEE_ID_USE_CASE_PROXY,
         TasksGeneralUsecaseProxyModule.GET_TASKS_BY_EMPLOYEE_ID_AND_PROJECT_ID_USE_CASE_PROXY,
         TasksGeneralUsecaseProxyModule.GET_TASKS_BY_PROJECT_ID_AND_STATUS_USE_CASE_PROXY,
