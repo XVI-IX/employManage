@@ -4,6 +4,7 @@ import { EmployeeAccountController } from './controllers/employees/account/emplo
 import { DepartmentControllerGateway } from './controllers/departments/departments.controllers';
 import { AttendanceGatewayController } from './controllers/attendance/attendance.controller';
 import { ProjectsGatewayController } from './controllers/projects/projects.controller';
+import { TasksGatewayController } from './controllers/tasks/tasks.controller';
 
 @Module({
   imports: [],
@@ -13,6 +14,7 @@ import { ProjectsGatewayController } from './controllers/projects/projects.contr
     DepartmentControllerGateway,
     AttendanceGatewayController,
     ProjectsGatewayController,
+    TasksGatewayController,
   ],
 })
 export class ControllerModule {}

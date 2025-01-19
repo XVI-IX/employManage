@@ -112,4 +112,9 @@ export class TasksController {
 
     return HttpResponse.send('Tasks fetched', tasks);
   }
+
+  @MessagePattern('taskTest')
+  async taskTest() {
+    return HttpResponse.send('Task test', {});
+  }
 }

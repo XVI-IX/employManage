@@ -1,3 +1,4 @@
+import { Public } from '@app/common/infrastructure/decorators';
 import {
   Body,
   Controller,
@@ -78,6 +79,12 @@ export class TasksGatewayController {
     @Body() data: Partial<TasksModel>,
   ) {
     return this.taskService.send('updateTask', { taskId, data });
+  }
+
+  @Get('/test')
+  @Public()
+  async test() {
+    return this.taskService.send('taskTest', {});
   }
 
   @Delete('/:taskId')
