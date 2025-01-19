@@ -239,7 +239,7 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
     }
 
     if (this.orderByClause === '') {
-      this.orderByClause = `ORDER BY ${String(field)} ${direction || 'ASC'}`;
+      this.orderByClause = ` ORDER BY ${String(field)} ${direction || 'ASC'}`;
     } else {
       this.orderByClause += `, ${String(field)} ${direction || 'ASC'}`;
     }
@@ -253,7 +253,7 @@ export class QueryBuilder<T> implements IQueryBuilder<T> {
   }
 
   offset(offset: number): QueryBuilder<T> {
-    this.offsetClause = `OFFSET ${offset ? offset : 0}`;
+    this.offsetClause = ` OFFSET ${offset ? offset : 0}`;
     return this;
   }
 

@@ -326,7 +326,7 @@ export class TaskRepository implements ITaskRepository {
       .select([])
       .from(this.collectionName)
       .where(options.where)
-      .orderBy(options.orderBy as keyof TasksModel)
+      .orderBy(options.orderBy as keyof TasksModel, 'DESC')
       .limit(options.take)
       .build();
 
@@ -355,8 +355,6 @@ export class TaskRepository implements ITaskRepository {
     try {
       const result = await this.databaseService.query(builder);
 
-      console.log('result: ', result);
-
       if (!result) {
         throw new BadRequestException('Task could not be retrieved');
       }
@@ -371,6 +369,7 @@ export class TaskRepository implements ITaskRepository {
       throw error;
     }
   }
+
   paginate?(
     options: IPaginateOptions,
     searchOptions?: IFindOptions<TasksModel>,
