@@ -9,7 +9,7 @@ export class UpdateTaskUseCase {
 
     const task = await this.taskRepository.findOne({
       where: {
-        id: data.id,
+        id: id,
       },
     });
 

@@ -63,6 +63,7 @@ export class TaskRepository implements ITaskRepository {
         employeeId,
       })
       .build();
+
     try {
       const result = await this.databaseService.query(builder);
 

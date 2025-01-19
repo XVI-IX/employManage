@@ -19,6 +19,7 @@ import { DeleteTaskUseCase } from '../../usecases/deleteTasks.usecase';
 import { GetTasksByEmployeeId } from '../../usecases/getTasksByEmployeeId.usecase';
 import { GetTasksByProjectIdAndEmployeeIdUseCase } from '../../usecases/getTasksByEmployeeIdAndProjectId.usecase';
 import { GetTaskByProjectIdAndEmployeeIdAndStatusUseCase } from '../../usecases/getTaskByProjectIdAndEmployeeIdAndStatus.usecase';
+import { GetTasksByStatusUseCase } from '../../usecases/findTasksByStatus.usecase';
 
 @Module({
   imports: [
@@ -47,6 +48,8 @@ export class TasksGeneralUsecaseProxyModule {
     'GET_TASKS_BY_EMPLOYEE_ID_AND_PROJECT_ID_USE_CASE_PROXY';
   static GET_TASKS_BY_PROJECT_ID_AND_STATUS_USE_CASE_PROXY =
     'GET_TASKS_BY_PROJECT_ID_AND_STATUS_USE_CASE_PROXY';
+  static GET_TASKS_BY_STATUS_USE_CASE_PROXY =
+    'GET_TASKS_BY_STATUS_USE_CASE_PROXY';
 
   static register(): DynamicModule {
     return {
@@ -153,6 +156,13 @@ export class TasksGeneralUsecaseProxyModule {
           useFactory: (taskRepository: TaskRepository) =>
             new UseCaseProxy(new GetTasksByProjectIdAndStatus(taskRepository)),
         },
+        {
+          inject: [TaskRepository],
+          provide:
+            TasksGeneralUsecaseProxyModule.GET_TASKS_BY_STATUS_USE_CASE_PROXY,
+          useFactory: (taskRepository: TaskRepository) =>
+            new UseCaseProxy(new GetTasksByStatusUseCase(taskRepository)),
+        },
       ],
       exports: [
         TasksGeneralUsecaseProxyModule.CREATE_TASK_USE_CASE_PROXY,
@@ -166,6 +176,7 @@ export class TasksGeneralUsecaseProxyModule {
         TasksGeneralUsecaseProxyModule.GET_TASKS_BY_EMPLOYEE_ID_USE_CASE_PROXY,
         TasksGeneralUsecaseProxyModule.GET_TASKS_BY_EMPLOYEE_ID_AND_PROJECT_ID_USE_CASE_PROXY,
         TasksGeneralUsecaseProxyModule.GET_TASKS_BY_PROJECT_ID_AND_STATUS_USE_CASE_PROXY,
+        TasksGeneralUsecaseProxyModule.GET_TASKS_BY_STATUS_USE_CASE_PROXY,
       ],
     };
   }

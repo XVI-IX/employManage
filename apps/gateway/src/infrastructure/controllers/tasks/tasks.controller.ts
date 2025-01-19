@@ -53,6 +53,14 @@ export class TasksGatewayController {
         projectId: query.projectId,
         status: query.status,
       });
+    } else if (query.status) {
+      return this.taskService.send('getTasksByStatus', {
+        status: query.status,
+      });
+    } else if (query.employeeId) {
+      return this.taskService.send('getTasksByEmployeeId', {
+        employeeId: query.employeeId,
+      });
     } else {
       return this.taskService.send('getAllTasks', {});
     }
@@ -68,10 +76,10 @@ export class TasksGatewayController {
     return this.taskService.send('getTaskByProjectId', { projectId });
   }
 
-  @Get('/employees/:employeeId')
-  async getTasksByEmployeeId(@Param('employeeId') employeeId: string) {
-    return this.taskService.send('getTasksByEmployeeId', { employeeId });
-  }
+  // @Get('/employees/:employeeId')
+  // async getTasksByEmployeeId(@Param('employeeId') employeeId: string) {
+  //   return this.taskService.send('getTasksByEmployeeId', { employeeId });
+  // }
 
   @Put('/:taskId')
   async updateTask(
