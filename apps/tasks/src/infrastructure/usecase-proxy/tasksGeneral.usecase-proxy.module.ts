@@ -4,7 +4,6 @@ import { TaskRepositoryModule } from '../repositories/task.repository.module';
 import { RepositoriesModule } from 'apps/employees/src/infrastructure/repositories/repositories.module';
 import { TaskRepository } from '../repositories/tasks.repository';
 import { EmployeeRepository } from 'apps/employees/src/infrastructure/repositories/employees.repository';
-import { DepartmentRepository } from 'apps/departments/src/infrastructure/repositories/department.repository';
 import { ProjectRepositoryModule } from 'apps/projects/src/infrastructure/repositories/projects.repository.module';
 import { UseCaseProxy } from '@app/common/infrastructure/usecase-proxy/usecase-proxy';
 import { CreateTaskUseCase } from '../../usecases/createTask.usecase';

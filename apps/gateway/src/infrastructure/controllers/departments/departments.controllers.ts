@@ -28,14 +28,22 @@ export class DepartmentControllerGateway {
 
   @Get('/')
   async getAllDepartments() {
-    return this.departmentService.send('getAllDepartments', {});
+    try {
+      return this.departmentService.send('getAllDepartments', {});
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Get('/:departmentId')
   async getDepartmentById(@Param('departmentId') departmentId: string) {
-    return this.departmentService.send('getDepartmentById', {
-      id: departmentId,
-    });
+    try {
+      return this.departmentService.send('getDepartmentById', {
+        id: departmentId,
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Put('/:departmentId')
@@ -43,16 +51,24 @@ export class DepartmentControllerGateway {
     @Param('departmentId') departmentId: string,
     @Body() data: UpdateDepartmentInput,
   ) {
-    return this.departmentService.send('updateDepartment', {
-      id: departmentId,
-      ...data,
-    });
+    try {
+      return this.departmentService.send('updateDepartment', {
+        id: departmentId,
+        ...data,
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Delete('/:departmentId')
   async deleteDepartment(@Param('departmentId') departmentId: string) {
-    return this.departmentService.send('deleteDepartment', {
-      id: departmentId,
-    });
+    try {
+      return this.departmentService.send('deleteDepartment', {
+        id: departmentId,
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 }

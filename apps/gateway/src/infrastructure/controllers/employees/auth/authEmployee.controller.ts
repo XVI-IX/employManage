@@ -17,25 +17,41 @@ export class AuthEmployeeController {
   @Post('/login')
   @Public()
   async loginEmployee(@Body() body: LoginEmployeePasswordInput) {
-    return this.employeeService.send('loginEmployee', body);
+    try {
+      return this.employeeService.send('loginEmployee', body);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Post('/register')
   @Public()
   async registerEmployee(@Body() body: RegisterEmployeeInput) {
-    return this.employeeService.send('registerEmployee', body);
+    try {
+      return this.employeeService.send('registerEmployee', body);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Post('/forgot-password')
   @Public()
   async forgotPassword(@Body() body: ForgotPasswordInput) {
-    return this.employeeService.send('forgotPasswordEmployee', body);
+    try {
+      return this.employeeService.send('forgotPasswordEmployee', body);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Post('/reset-password')
   @Public()
   async resetPassword(@Body() body: ResetPasswordInput) {
-    return this.employeeService.send('resetPasswordEmployee', body);
+    try {
+      return this.employeeService.send('resetPasswordEmployee', body);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Get('/test')
