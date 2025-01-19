@@ -56,7 +56,7 @@ export class TasksGeneralUsecaseProxyModule {
          * CreateTaskUseCase
          */
         {
-          inject: [TaskRepository],
+          inject: [TaskRepository, EmployeeRepository, ProjectRepository],
           provide: TasksGeneralUsecaseProxyModule.CREATE_TASK_USE_CASE_PROXY,
           useFactory: (
             taskRepository: TaskRepository,

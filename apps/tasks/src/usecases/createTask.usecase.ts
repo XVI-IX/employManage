@@ -47,10 +47,17 @@ export class CreateTaskUseCase {
       throw new ConflictException('Task with name already exists');
     }
 
-    // const deparment = await this.departmentRepository.findOne(data)
+    await this.taskRepository.save(data);
 
-    const task = await this.taskRepository.save(data);
+    const returnTask = await this.taskRepository.findOne({
+      where: {
+        name: data.name,
+        projectId: data.projectId,
+      },
+    });
 
-    return task;
+    console.log('Task created', returnTask);
+
+    return returnTask;
   }
 }
