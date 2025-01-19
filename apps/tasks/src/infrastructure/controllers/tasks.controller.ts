@@ -2,7 +2,7 @@ import { Controller, Inject } from '@nestjs/common';
 import { TasksGeneralUsecaseProxyModule } from '../usecase-proxy/tasksGeneral.usecase-proxy.module';
 import { UseCaseProxy } from '@app/common/infrastructure/usecase-proxy/usecase-proxy';
 import { CreateTaskUseCase } from '../../usecases/createTask.usecase';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 import { CreateTaskInput } from '../common/schemas/tasks.schema';
 import { HttpResponse } from '@app/common/infrastructure/helpers/response.helper';
 import { GetAllTasksUseCase } from '../../usecases/getAllTasks.usecase';
@@ -48,65 +48,93 @@ export class TasksController {
 
   @MessagePattern('createTask')
   async createTask(@Payload() data: CreateTaskInput) {
-    const task = await this.createTaskUseCase
-      .getInstance()
-      .createTaskRepository(data);
+    try {
+      const task = await this.createTaskUseCase
+        .getInstance()
+        .createTaskRepository(data);
 
-    return HttpResponse.send('Task created', task);
+      return HttpResponse.send('Task created', task);
+    } catch (error) {
+      throw new RpcException(error);
+    }
   }
 
   @MessagePattern('getAllTasks')
   async getAllTasks() {
-    const tasks = await this.getAllTasksUseCase
-      .getInstance()
-      .getAllTasksUseCase();
+    try {
+      const tasks = await this.getAllTasksUseCase
+        .getInstance()
+        .getAllTasksUseCase();
 
-    return HttpResponse.send('Tasks fetched', tasks);
+      return HttpResponse.send('Tasks fetched', tasks);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @MessagePattern('getTaskById')
   async getTaskById(@Payload() data: { taskId: string }) {
-    const task = await this.getTaskByIdUseCase
-      .getInstance()
-      .getTaskById(data.taskId);
+    try {
+      const task = await this.getTaskByIdUseCase
+        .getInstance()
+        .getTaskById(data.taskId);
 
-    return HttpResponse.send('Task Retrieved', task);
+      return HttpResponse.send('Task Retrieved', task);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @MessagePattern('updateTask')
   async updateTask(
     @Payload() data: { taskId: string; data: Partial<TasksModel> },
   ) {
-    const task = await this.updateTaskUseCase
-      .getInstance()
-      .updateTask(data.taskId, data.data);
+    try {
+      const task = await this.updateTaskUseCase
+        .getInstance()
+        .updateTask(data.taskId, data.data);
 
-    return HttpResponse.send('Task updated', task);
+      return HttpResponse.send('Task updated', task);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @MessagePattern('deleteTask')
   async deleteTask(@Payload() data: { taskId: string }) {
-    await this.deleteTaskUseCase.getInstance().deleteTask(data.taskId);
+    try {
+      await this.deleteTaskUseCase.getInstance().deleteTask(data.taskId);
 
-    return HttpResponse.send('Task deleted', {});
+      return HttpResponse.send('Task deleted', {});
+    } catch (error) {
+      throw error;
+    }
   }
 
   @MessagePattern('getTasksByStatus')
   async GetTasksByStatus(@Payload() data: { status: string }) {
-    const tasks = await this.getTasksByStatusUseCase
-      .getInstance()
-      .getTasksByStatus(data.status);
+    try {
+      const tasks = await this.getTasksByStatusUseCase
+        .getInstance()
+        .getTasksByStatus(data.status);
 
-    return HttpResponse.send('Tasks fetched', tasks);
+      return HttpResponse.send('Tasks fetched', tasks);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @MessagePattern('getTaskByProjectId')
   async getTasksByProjectId(@Payload() data: { projectId: string }) {
-    const tasks = await this.getTasksByProjectIdUseCase
-      .getInstance()
-      .getTaskByProjectId(data.projectId);
+    try {
+      const tasks = await this.getTasksByProjectIdUseCase
+        .getInstance()
+        .getTaskByProjectId(data.projectId);
 
-    return HttpResponse.send('Tasks fetched', tasks);
+      return HttpResponse.send('Tasks fetched', tasks);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @MessagePattern('getTasksByProjectIdAndEmployeeIdAndStatus')
@@ -118,11 +146,15 @@ export class TasksController {
 
   @MessagePattern('getTasksByEmployeeId')
   async getTasksByEmployeeId(@Payload() data: { employeeId: string }) {
-    const tasks = await this.getTasksByEmployeeIdUseCase
-      .getInstance()
-      .GetTasksByEmployeeId(data.employeeId);
+    try {
+      const tasks = await this.getTasksByEmployeeIdUseCase
+        .getInstance()
+        .GetTasksByEmployeeId(data.employeeId);
 
-    return HttpResponse.send('Tasks fetched', tasks);
+      return HttpResponse.send('Tasks fetched', tasks);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @MessagePattern('taskTest')
