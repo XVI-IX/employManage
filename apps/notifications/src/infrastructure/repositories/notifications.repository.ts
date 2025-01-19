@@ -20,6 +20,33 @@ export class NotificationsRepository implements INotificationRepository {
     this.collectionName = 'Notifications';
   }
 
+  async markAllAsRead(employeeId: string): Promise<NotificationModel[]> {
+    const builder: string = new QueryBuilder<NotificationModel>()
+      .from(this.collectionName)
+      .update({
+        isRead: true,
+      })
+      .where({
+        employeeId,
+      })
+      .build();
+
+    try {
+      const result = await this.databaseService.query(builder);
+
+      if (!result) {
+        throw new BadRequestException(
+          'Notifications could not be marked as read',
+        );
+      }
+
+      return this.transformQueryResultToNotificationModelArray(result);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
+  }
+
   async markAsRead(notificationId: string): Promise<NotificationModel> {
     const builder: string = new QueryBuilder<NotificationModel>()
       .from(this.collectionName)
@@ -52,8 +79,23 @@ export class NotificationsRepository implements INotificationRepository {
   //   throw new Error('Method not implemented.');
   // }
 
-  save?(entity: Partial<NotificationModel>): Promise<NotificationModel> {
-    throw new Error('Method not implemented.');
+  async save?(entity: Partial<NotificationModel>): Promise<NotificationModel> {
+    const builder: string = new QueryBuilder<NotificationModel>()
+      .into(this.collectionName)
+      .insert(entity)
+      .build();
+    try {
+      const result = await this.databaseService.query(builder);
+
+      if (!result) {
+        throw new BadRequestException('Notification could not be saved');
+      }
+
+      return this.transformQueryResultToNotificationModel(result);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw error;
+    }
   }
 
   async find?(
