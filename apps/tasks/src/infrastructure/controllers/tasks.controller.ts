@@ -14,6 +14,7 @@ import { GetTaskByProjectIdUseCase } from '../../usecases/getTaskByProjectId.use
 import { GetTasksByProjectIdAndStatus } from '../../usecases/getTasksByProjectIdAndStatus.usecase';
 import { GetTasksByEmployeeId } from '../../usecases/getTasksByEmployeeId.usecase';
 import { GetTaskByProjectIdAndEmployeeIdAndStatusUseCase } from '../../usecases/getTaskByProjectIdAndEmployeeIdAndStatus.usecase';
+import { GetTasksByStatusUseCase } from '../../usecases/findTasksByStatus.usecase';
 
 @Controller()
 export class TasksController {
@@ -41,6 +42,8 @@ export class TasksController {
       TasksGeneralUsecaseProxyModule.GET_TASKS_BY_EMPLOYEE_ID_USE_CASE_PROXY,
     )
     private readonly getTasksByEmployeeIdUseCase: UseCaseProxy<GetTasksByEmployeeId>,
+    @Inject(TasksGeneralUsecaseProxyModule.GET_TASKS_BY_STATUS_USE_CASE_PROXY)
+    private readonly getTasksByStatusUseCase: UseCaseProxy<GetTasksByStatusUseCase>,
   ) {}
 
   @MessagePattern('createTask')
@@ -88,6 +91,15 @@ export class TasksController {
     return HttpResponse.send('Task deleted', {});
   }
 
+  @MessagePattern('getTasksByStatus')
+  async GetTasksByStatus(@Payload() data: { status: string }) {
+    const tasks = await this.getTasksByStatusUseCase
+      .getInstance()
+      .getTasksByStatus(data.status);
+
+    return HttpResponse.send('Tasks fetched', tasks);
+  }
+
   @MessagePattern('getTaskByProjectId')
   async getTasksByProjectId(@Payload() data: { projectId: string }) {
     const tasks = await this.getTasksByProjectIdUseCase
@@ -111,5 +123,10 @@ export class TasksController {
       .GetTasksByEmployeeId(data.employeeId);
 
     return HttpResponse.send('Tasks fetched', tasks);
+  }
+
+  @MessagePattern('taskTest')
+  async taskTest() {
+    return HttpResponse.send('Task test', {});
   }
 }

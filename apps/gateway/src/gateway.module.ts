@@ -10,6 +10,7 @@ import { JwtTokenModule } from '@app/common/infrastructure/services/jwt/jwt.modu
 import { DepartmentControllerGateway } from './infrastructure/controllers/departments/departments.controllers';
 import { AttendanceGatewayController } from './infrastructure/controllers/attendance/attendance.controller';
 import { ProjectsGatewayController } from './infrastructure/controllers/projects/projects.controller';
+import { TasksGatewayController } from './infrastructure/controllers/tasks/tasks.controller';
 
 @Module({
   imports: [
@@ -54,6 +55,14 @@ import { ProjectsGatewayController } from './infrastructure/controllers/projects
           port: 3005,
         },
       },
+      {
+        name: 'TASK_SERVICE',
+        transport: Transport.TCP,
+        options: {
+          host: 'localhost',
+          port: 3006,
+        },
+      },
     ]),
     JwtTokenModule,
   ],
@@ -63,6 +72,7 @@ import { ProjectsGatewayController } from './infrastructure/controllers/projects
     DepartmentControllerGateway,
     AttendanceGatewayController,
     ProjectsGatewayController,
+    TasksGatewayController,
   ],
   providers: [
     {

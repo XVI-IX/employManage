@@ -21,27 +21,39 @@ export class ProjectsGatewayController {
 
   @Post('/')
   async createProject(@Body() data: CreateProjectInput) {
-    return this.projectsService.send('createProject', data);
+    try {
+      return this.projectsService.send('createProject', data);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Get('/')
   async getAllProjects(
     @Query() query: { completed: boolean; pending: boolean; due: boolean },
   ) {
-    if (query.completed) {
-      return this.projectsService.send('getCompletedProjects', {});
-    } else if (query.pending) {
-      return this.projectsService.send('getPendingProjects', {});
-    } else if (query.due) {
-      return this.projectsService.send('getDueProjects', {});
-    } else {
-      return this.projectsService.send('getAllProjects', {});
+    try {
+      if (query.completed) {
+        return this.projectsService.send('getCompletedProjects', {});
+      } else if (query.pending) {
+        return this.projectsService.send('getPendingProjects', {});
+      } else if (query.due) {
+        return this.projectsService.send('getDueProjects', {});
+      } else {
+        return this.projectsService.send('getAllProjects', {});
+      }
+    } catch (error) {
+      throw error;
     }
   }
 
   @Get('/:projectId')
   async getProjectById(@Param('projectId') projectId: string) {
-    return this.projectsService.send('getProjectById', { projectId });
+    try {
+      return this.projectsService.send('getProjectById', { projectId });
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Put('/:projectId')
@@ -49,29 +61,45 @@ export class ProjectsGatewayController {
     @Param('projectId') projectId: string,
     @Body() data: Partial<ProjectModel>,
   ) {
-    return this.projectsService.send('updateProject', {
-      projectId,
-      data,
-    });
+    try {
+      return this.projectsService.send('updateProject', {
+        projectId,
+        data,
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Get('/departments/:departmentId')
   async getProjectsByDepartmentId(@Param('departmentId') departmentId: string) {
-    return this.projectsService.send('getProjectsByDepartmentId', {
-      departmentId,
-    });
+    try {
+      return this.projectsService.send('getProjectsByDepartmentId', {
+        departmentId,
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Get('/supervisors/:supervisorId')
   async getSupervisorProjects(@Param('supervisorId') supervisorId: string) {
-    return this.projectsService.send('getSupervisorProjects', {
-      supervisorId,
-    });
+    try {
+      return this.projectsService.send('getSupervisorProjects', {
+        supervisorId,
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Get('/:projectId/assignees')
   async getAllProjectAssignees(@Param('projectId') projectId: string) {
-    return this.projectsService.send('getAllProjectAssignees', { projectId });
+    try {
+      return this.projectsService.send('getAllProjectAssignees', { projectId });
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Put('/:projectId/assignees/:assigneeId')
@@ -79,10 +107,14 @@ export class ProjectsGatewayController {
     @Param('projectId') projectId: string,
     @Param('assigneeId') assigneeId: string,
   ) {
-    return this.projectsService.send('addProjectAssignee', {
-      projectId,
-      assigneeId,
-    });
+    try {
+      return this.projectsService.send('addProjectAssignee', {
+        projectId,
+        assigneeId,
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Delete('/:projectId/assignees/:assigneeId')
@@ -90,16 +122,24 @@ export class ProjectsGatewayController {
     @Param('projectId') projectId: string,
     @Param('assigneeId') assigneeId: string,
   ) {
-    return this.projectsService.send('removeProjectAssignee', {
-      projectId,
-      assigneeId,
-    });
+    try {
+      return this.projectsService.send('removeProjectAssignee', {
+        projectId,
+        assigneeId,
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Delete('/:projectId')
   async deleteProject(@Param('projectId') projectId: string) {
-    return this.projectsService.send('deleteProject', {
-      projectId,
-    });
+    try {
+      return this.projectsService.send('deleteProject', {
+        projectId,
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 }

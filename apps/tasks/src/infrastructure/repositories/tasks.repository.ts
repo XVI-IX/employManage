@@ -1,6 +1,6 @@
 import { DatabaseService } from '@app/common/infrastructure/services/database/database.service';
 import { ITaskRepository } from '../../domain/repositories/tasks.repository';
-import { BadRequestException, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import {
   IFindOptions,
   IFindOneOptions,
@@ -10,6 +10,7 @@ import {
 import { TasksModel } from '../../domain/models/tasks.model';
 import { QueryBuilder } from '@app/common/infrastructure/services/database/database.query.builder';
 
+@Injectable()
 export class TaskRepository implements ITaskRepository {
   private readonly collectionName: string;
   private readonly logger: Logger;
@@ -18,6 +19,7 @@ export class TaskRepository implements ITaskRepository {
     this.collectionName = 'tasks';
     this.logger = new Logger(TaskRepository.name);
   }
+
   findTasksByProjectIdAndEmployeeIdAndStatusAndDateRangeAndName(
     projectId: string,
     employeeId: string,
@@ -61,6 +63,7 @@ export class TaskRepository implements ITaskRepository {
         employeeId,
       })
       .build();
+
     try {
       const result = await this.databaseService.query(builder);
 
@@ -324,7 +327,7 @@ export class TaskRepository implements ITaskRepository {
       .select([])
       .from(this.collectionName)
       .where(options.where)
-      .orderBy(options.orderBy as keyof TasksModel)
+      .orderBy(options.orderBy as keyof TasksModel, 'DESC')
       .limit(options.take)
       .build();
 
@@ -357,12 +360,17 @@ export class TaskRepository implements ITaskRepository {
         throw new BadRequestException('Task could not be retrieved');
       }
 
-      return this.transformQueryResultToTaskModel(result);
+      if (result.length === 0) {
+        return null;
+      }
+
+      return this.transformQueryResultToTaskModel(result[0]);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw error;
     }
   }
+
   paginate?(
     options: IPaginateOptions,
     searchOptions?: IFindOptions<TasksModel>,
@@ -412,6 +420,7 @@ export class TaskRepository implements ITaskRepository {
   }
 
   private transformQueryResultToTaskModel(row: any): TasksModel {
+    console.log('row: ', row);
     return {
       id: row.id,
       projectId: row.projectId,

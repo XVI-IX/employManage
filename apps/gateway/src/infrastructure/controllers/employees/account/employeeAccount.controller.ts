@@ -10,12 +10,20 @@ export class EmployeeAccountController {
 
   @Get('/')
   async getAllEmployees() {
-    return this.employeeService.send('getAllEmployees', {});
+    try {
+      return this.employeeService.send('getAllEmployees', {});
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Get('/:employeeId')
   async getEmployeeById(@Param('employeeId') employeeId: string) {
-    return this.employeeService.send('getEmployeeById', { employeeId });
+    try {
+      return this.employeeService.send('getEmployeeById', { employeeId });
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Put('/:employeeId')
@@ -23,6 +31,10 @@ export class EmployeeAccountController {
     @Param('employeeId') employeeId: string,
     @Body() data: UpdateEmployeeInput,
   ) {
-    return this.employeeService.send('updateEmployee', { employeeId, data });
+    try {
+      return this.employeeService.send('updateEmployee', { employeeId, data });
+    } catch (error) {
+      throw error;
+    }
   }
 }

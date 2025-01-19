@@ -4,7 +4,6 @@ import { TaskRepositoryModule } from '../repositories/task.repository.module';
 import { RepositoriesModule } from 'apps/employees/src/infrastructure/repositories/repositories.module';
 import { TaskRepository } from '../repositories/tasks.repository';
 import { EmployeeRepository } from 'apps/employees/src/infrastructure/repositories/employees.repository';
-import { DepartmentRepository } from 'apps/departments/src/infrastructure/repositories/department.repository';
 import { ProjectRepositoryModule } from 'apps/projects/src/infrastructure/repositories/projects.repository.module';
 import { UseCaseProxy } from '@app/common/infrastructure/usecase-proxy/usecase-proxy';
 import { CreateTaskUseCase } from '../../usecases/createTask.usecase';
@@ -19,6 +18,7 @@ import { DeleteTaskUseCase } from '../../usecases/deleteTasks.usecase';
 import { GetTasksByEmployeeId } from '../../usecases/getTasksByEmployeeId.usecase';
 import { GetTasksByProjectIdAndEmployeeIdUseCase } from '../../usecases/getTasksByEmployeeIdAndProjectId.usecase';
 import { GetTaskByProjectIdAndEmployeeIdAndStatusUseCase } from '../../usecases/getTaskByProjectIdAndEmployeeIdAndStatus.usecase';
+import { GetTasksByStatusUseCase } from '../../usecases/findTasksByStatus.usecase';
 
 @Module({
   imports: [
@@ -47,6 +47,8 @@ export class TasksGeneralUsecaseProxyModule {
     'GET_TASKS_BY_EMPLOYEE_ID_AND_PROJECT_ID_USE_CASE_PROXY';
   static GET_TASKS_BY_PROJECT_ID_AND_STATUS_USE_CASE_PROXY =
     'GET_TASKS_BY_PROJECT_ID_AND_STATUS_USE_CASE_PROXY';
+  static GET_TASKS_BY_STATUS_USE_CASE_PROXY =
+    'GET_TASKS_BY_STATUS_USE_CASE_PROXY';
 
   static register(): DynamicModule {
     return {
@@ -56,7 +58,7 @@ export class TasksGeneralUsecaseProxyModule {
          * CreateTaskUseCase
          */
         {
-          inject: [TaskRepository],
+          inject: [TaskRepository, EmployeeRepository, ProjectRepository],
           provide: TasksGeneralUsecaseProxyModule.CREATE_TASK_USE_CASE_PROXY,
           useFactory: (
             taskRepository: TaskRepository,
@@ -153,6 +155,13 @@ export class TasksGeneralUsecaseProxyModule {
           useFactory: (taskRepository: TaskRepository) =>
             new UseCaseProxy(new GetTasksByProjectIdAndStatus(taskRepository)),
         },
+        {
+          inject: [TaskRepository],
+          provide:
+            TasksGeneralUsecaseProxyModule.GET_TASKS_BY_STATUS_USE_CASE_PROXY,
+          useFactory: (taskRepository: TaskRepository) =>
+            new UseCaseProxy(new GetTasksByStatusUseCase(taskRepository)),
+        },
       ],
       exports: [
         TasksGeneralUsecaseProxyModule.CREATE_TASK_USE_CASE_PROXY,
@@ -166,6 +175,7 @@ export class TasksGeneralUsecaseProxyModule {
         TasksGeneralUsecaseProxyModule.GET_TASKS_BY_EMPLOYEE_ID_USE_CASE_PROXY,
         TasksGeneralUsecaseProxyModule.GET_TASKS_BY_EMPLOYEE_ID_AND_PROJECT_ID_USE_CASE_PROXY,
         TasksGeneralUsecaseProxyModule.GET_TASKS_BY_PROJECT_ID_AND_STATUS_USE_CASE_PROXY,
+        TasksGeneralUsecaseProxyModule.GET_TASKS_BY_STATUS_USE_CASE_PROXY,
       ],
     };
   }
