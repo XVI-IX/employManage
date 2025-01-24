@@ -27,4 +27,5 @@ export interface IEnvironmentInterface {
   getAttendanceServicePort(): number;
   getProjectServicePort(): number;
   getTaskServicePort(): number;
+  getNotifcationServicePort(): number;
 }

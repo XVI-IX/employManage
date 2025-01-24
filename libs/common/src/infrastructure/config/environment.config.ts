@@ -76,6 +76,10 @@ class EnvironmentConfig implements IEnvironmentInterface {
     return env.get('PROJECTS_SERVICE_PORT').asInt();
   }
 
+  getNotifcationServicePort(): number {
+    return env.get('NOTIFICATION_SERVICE_PORT').asInt();
+  }
+
   getMicroServicesHost(): string {
     return env.get('MICROSERVICES_HOST').asString();
   }
