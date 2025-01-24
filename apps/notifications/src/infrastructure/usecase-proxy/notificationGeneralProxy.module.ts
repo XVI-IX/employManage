@@ -10,6 +10,7 @@ import { GetNotificationsById } from '../../usecase/getNotificationById.usecase'
 import { MarkAllNotificationsAsReadUseCase } from '../../usecase/markAllNotificationsRead.usecase';
 import { MarkNotificationAsReadUseCase } from '../../usecase/markNotificationAsRead.usecase';
 import { UpdateNotificationUseCase } from '../../usecase/updateNotification.usecase';
+import { GetNotificationsByEmployeeIdUseCase } from '../../usecase/getNotificationsByEmployeeId.usecase';
 
 @Module({
   imports: [NotificationsRepositoryModule, DatabaseModule],
@@ -29,6 +30,8 @@ export class NotificationGeneralUseCaseProxyModule {
     'MARK_NOTIFICATION_AS_READ_USE_CASE_PROXY';
   static UPDATE_NOTIFICATION_USE_CASE_PROXY =
     'UPDATE_NOTIFICATION_USE_CASE_PROXY';
+  static GET_NOTIFICATIONS_BY_EMPLOYEE_ID_USE_CASE_PROXY =
+    'GET_NOTIFICATIONS_BY_EMPLOYEE_ID_USE_CASE_PROXY';
 
   static register(): DynamicModule {
     return {
@@ -95,6 +98,15 @@ export class NotificationGeneralUseCaseProxyModule {
               new UpdateNotificationUseCase(notificationRepository),
             ),
         },
+        {
+          inject: [NotificationsRepository],
+          provide:
+            NotificationGeneralUseCaseProxyModule.GET_NOTIFICATIONS_BY_EMPLOYEE_ID_USE_CASE_PROXY,
+          useFactory: (notificationRepository: NotificationsRepository) =>
+            new UseCaseProxy(
+              new GetNotificationsByEmployeeIdUseCase(notificationRepository),
+            ),
+        },
       ],
       exports: [
         NotificationGeneralUseCaseProxyModule.CREATE_NOTIFICATION_USE_CASE_PROXY,
@@ -104,6 +116,7 @@ export class NotificationGeneralUseCaseProxyModule {
         NotificationGeneralUseCaseProxyModule.MARK_ALL_NOTIFICATIONS_AS_READ_USE_CASE_PROXY,
         NotificationGeneralUseCaseProxyModule.MARK_NOTIFICATION_AS_READ_USE_CASE_PROXY,
         NotificationGeneralUseCaseProxyModule.UPDATE_NOTIFICATION_USE_CASE_PROXY,
+        NotificationGeneralUseCaseProxyModule.GET_NOTIFICATIONS_BY_EMPLOYEE_ID_USE_CASE_PROXY,
       ],
     };
   }
