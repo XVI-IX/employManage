@@ -11,6 +11,7 @@ import { DepartmentControllerGateway } from './infrastructure/controllers/depart
 import { AttendanceGatewayController } from './infrastructure/controllers/attendance/attendance.controller';
 import { ProjectsGatewayController } from './infrastructure/controllers/projects/projects.controller';
 import { TasksGatewayController } from './infrastructure/controllers/tasks/tasks.controller';
+import { NotificationGatewayController } from './infrastructure/controllers/notifications/notification.controller';
 
 @Module({
   imports: [
@@ -63,6 +64,14 @@ import { TasksGatewayController } from './infrastructure/controllers/tasks/tasks
           port: 3006,
         },
       },
+      {
+        name: 'NOTIFICATION_SERVICE',
+        transport: Transport.TCP,
+        options: {
+          host: 'localhost',
+          port: 3007,
+        },
+      },
     ]),
     JwtTokenModule,
   ],
@@ -73,6 +82,7 @@ import { TasksGatewayController } from './infrastructure/controllers/tasks/tasks
     AttendanceGatewayController,
     ProjectsGatewayController,
     TasksGatewayController,
+    NotificationGatewayController,
   ],
   providers: [
     {

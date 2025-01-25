@@ -2,7 +2,7 @@ import { Controller, Inject } from '@nestjs/common';
 import { TasksGeneralUsecaseProxyModule } from '../usecase-proxy/tasksGeneral.usecase-proxy.module';
 import { UseCaseProxy } from '@app/common/infrastructure/usecase-proxy/usecase-proxy';
 import { CreateTaskUseCase } from '../../usecases/createTask.usecase';
-import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
+import { ClientProxy, MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 import { CreateTaskInput } from '../common/schemas/tasks.schema';
 import { HttpResponse } from '@app/common/infrastructure/helpers/response.helper';
 import { GetAllTasksUseCase } from '../../usecases/getAllTasks.usecase';
@@ -11,7 +11,7 @@ import { TasksModel } from '../../domain/models/tasks.model';
 import { UpdateTaskUseCase } from '../../usecases/updateTask.usecase';
 import { DeleteTaskUseCase } from '../../usecases/deleteTasks.usecase';
 import { GetTaskByProjectIdUseCase } from '../../usecases/getTaskByProjectId.usecase';
-import { GetTasksByProjectIdAndStatus } from '../../usecases/getTasksByProjectIdAndStatus.usecase';
+// import { GetTasksByProjectIdAndStatus } from '../../usecases/getTasksByProjectIdAndStatus.usecase';
 import { GetTasksByEmployeeId } from '../../usecases/getTasksByEmployeeId.usecase';
 import { GetTaskByProjectIdAndEmployeeIdAndStatusUseCase } from '../../usecases/getTaskByProjectIdAndEmployeeIdAndStatus.usecase';
 import { GetTasksByStatusUseCase } from '../../usecases/findTasksByStatus.usecase';
@@ -19,6 +19,7 @@ import { GetTasksByStatusUseCase } from '../../usecases/findTasksByStatus.usecas
 @Controller()
 export class TasksController {
   constructor(
+    @Inject('NOTIFICATION_SERVICE') private readonly notificationService: ClientProxy,
     @Inject(TasksGeneralUsecaseProxyModule.CREATE_TASK_USE_CASE_PROXY)
     private readonly createTaskUseCase: UseCaseProxy<CreateTaskUseCase>,
     @Inject(TasksGeneralUsecaseProxyModule.GET_ALL_TASKS_USE_CASE_PROXY)
@@ -52,6 +53,8 @@ export class TasksController {
       const task = await this.createTaskUseCase
         .getInstance()
         .createTaskRepository(data);
+
+        this.notificationService.emit('createNotification', task)
 
       return HttpResponse.send('Task created', task);
     } catch (error) {

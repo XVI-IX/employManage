@@ -10,7 +10,10 @@ import { MarkNotificationAsReadUseCase } from '../../usecase/markNotificationAsR
 import { GetNotificationsByEmployeeIdUseCase } from '../../usecase/getNotificationsByEmployeeId.usecase';
 import { UpdateNotificationUseCase } from '../../usecase/updateNotification.usecase';
 import { MessagePattern } from '@nestjs/microservices';
-import { CreateNotificationInput } from '../common/schemas/notifications.schema';
+import {
+  CreateNotificationInput,
+  UpdateNotificationInput,
+} from '../common/schemas/notifications.schema';
 import { HttpResponse } from '@app/common/infrastructure/helpers/response.helper';
 
 @Controller()
@@ -120,7 +123,7 @@ export class NotificationsController {
   }
 
   @MessagePattern('updateNotification')
-  async updateNotification(data: any) {
+  async updateNotification(data: UpdateNotificationInput) {
     const response = await this.updateNotificationUseCaseProxy
       .getInstance()
       .updateNotification(data.notificationId, data);
