@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, Query } from '@nestjs/common';
 import { INotificationRepository } from '../../domain/repositories';
 import { DatabaseService } from '@app/common/infrastructure/services/database/database.service';
 import {
@@ -9,6 +9,7 @@ import {
 } from '@app/common/domain/adapters';
 import { NotificationModel } from '../../domain/models';
 import { QueryBuilder } from '@app/common/infrastructure/services/database/database.query.builder';
+import { throws } from 'assert';
 
 @Injectable()
 export class NotificationsRepository implements INotificationRepository {
@@ -40,7 +41,17 @@ export class NotificationsRepository implements INotificationRepository {
         );
       }
 
-      return this.transformQueryResultToNotificationModelArray(result);
+      const returnResult = await this.databaseService.query(
+        new QueryBuilder<NotificationModel>()
+          .select([])
+          .from(this.collectionName)
+          .where({
+            employeeId: employeeId,
+          })
+          .build(),
+      );
+
+      return this.transformQueryResultToNotificationModelArray(returnResult);
     } catch (error) {
       this.logger.error(error);
       throw error;
@@ -66,7 +77,15 @@ export class NotificationsRepository implements INotificationRepository {
         );
       }
 
-      return this.transformQueryResultToNotificationModel(results[0]);
+      const returnResult = await this.databaseService.query(
+        new QueryBuilder<NotificationModel>()
+          .select([])
+          .from(this.collectionName)
+          .where({ id: notificationId })
+          .build(),
+      );
+
+      return this.transformQueryResultToNotificationModel(returnResult[0]);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw error;

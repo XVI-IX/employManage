@@ -95,9 +95,9 @@ export class NotificationsController {
 
   @MessagePattern('markAllNotificationsAsRead')
   async markAllNotifcationsAsRead(employeeId: string) {
-    const response = await this.markNotificationAsReadUseCaseProxy
+    const response = await this.markAllNotificationsAsReadUseCaseProxy
       .getInstance()
-      .markAsRead(employeeId);
+      .markAllNotificationsAsRead(employeeId);
 
     return HttpResponse.send(
       'Notifications marked as read successfully',

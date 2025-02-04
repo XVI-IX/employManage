@@ -5,10 +5,11 @@ export class MarkAllNotificationsAsReadUseCase {
     private readonly notificationRepository: INotificationRepository,
   ) {}
 
-  async markAllNotificationsAsRead(employeeId: string) {
+  async markAllNotificationsAsRead(data: any) {
     try {
-      const result =
-        await this.notificationRepository.markAllAsRead(employeeId);
+      const result = await this.notificationRepository.markAllAsRead(
+        data.employeeId,
+      );
 
       return result;
     } catch (error) {

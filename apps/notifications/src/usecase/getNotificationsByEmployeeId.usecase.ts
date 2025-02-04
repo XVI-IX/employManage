@@ -5,11 +5,11 @@ export class GetNotificationsByEmployeeIdUseCase {
     private readonly notificationRepository: INotificationRepository,
   ) {}
 
-  async getNotificationsByEmployeeId(employeeId: string) {
+  async getNotificationsByEmployeeId(data: any) {
     try {
       const results = await this.notificationRepository.find({
         where: {
-          employeeId,
+          employeeId: data.employeeId,
         },
       });
 

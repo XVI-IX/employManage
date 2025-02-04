@@ -9,10 +9,10 @@ export class GetNotificationsById {
     this.logger = new Logger(GetNotificationsById.name);
   }
 
-  async getNotificationById(notificationId: string) {
-    const notification = await this.notificationRepository.findOne({
+  async getNotificationById(data: any) {
+    const notification = await this.notificationRepository.find({
       where: {
-        id: notificationId,
+        id: data.notificationId,
       },
     });
 

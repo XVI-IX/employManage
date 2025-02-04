@@ -9,10 +9,10 @@ export class MarkNotificationAsReadUseCase {
     this.logger = new Logger(MarkNotificationAsReadUseCase.name);
   }
 
-  async markAsRead(notificationId: string) {
-    const notificationCheck = await this.notificationRepository.findOne({
+  async markAsRead(data: any) {
+    const notificationCheck = await this.notificationRepository.find({
       where: {
-        id: notificationId,
+        id: data.notificationId,
       },
     });
 
@@ -20,8 +20,9 @@ export class MarkNotificationAsReadUseCase {
       throw new NotFoundException('Notification with ID not found');
     }
 
-    const notification =
-      await this.notificationRepository.markAsRead(notificationId);
+    const notification = await this.notificationRepository.markAsRead(
+      data.notificationId,
+    );
 
     return notification;
   }

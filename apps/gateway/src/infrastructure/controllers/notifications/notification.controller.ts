@@ -7,6 +7,7 @@ import {
   Inject,
   Param,
   Post,
+  Put,
   Res,
   Sse,
 } from '@nestjs/common';
@@ -62,7 +63,16 @@ export class NotificationGatewayController {
     });
   }
 
-  @Get('/mark-all-as-read/:employeeId')
+  @Put('/:notificationId')
+  async markNotificationAsRead(
+    @Param('notificationId') notificationId: string,
+  ) {
+    return this.notificationService.send('markNotificationAsRead', {
+      notificationId,
+    });
+  }
+
+  @Put('/mark-all-as-read/:employeeId')
   async markAllNotificationsAsRead(@Param('employeeId') employeeId: string) {
     return this.notificationService.send('markAllNotificationsAsRead', {
       employeeId,
