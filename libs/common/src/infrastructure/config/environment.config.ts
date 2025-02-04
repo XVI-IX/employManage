@@ -76,6 +76,10 @@ class EnvironmentConfig implements IEnvironmentInterface {
     return env.get('PROJECTS_SERVICE_PORT').asInt();
   }
 
+  getNotifcationServicePort(): number {
+    return env.get('NOTIFICATION_SERVICE_PORT').asInt();
+  }
+
   getMicroServicesHost(): string {
     return env.get('MICROSERVICES_HOST').asString();
   }
@@ -102,6 +106,18 @@ class EnvironmentConfig implements IEnvironmentInterface {
 
   getDatabasePort(): number {
     return env.get('DATABASE_PORT').asInt() || 3306;
+  }
+
+  getRedisHost(): string {
+    return env.get('REDIS_HOST').asString();
+  }
+
+  getRedisPort(): number {
+    return env.get('REDIS_PORT').asInt();
+  }
+
+  getRedisPassword(): string {
+    return env.get('REDIS_PASSWORD').asString();
   }
 }
 

@@ -5,9 +5,11 @@ import { DepartmentControllerGateway } from './controllers/departments/departmen
 import { AttendanceGatewayController } from './controllers/attendance/attendance.controller';
 import { ProjectsGatewayController } from './controllers/projects/projects.controller';
 import { TasksGatewayController } from './controllers/tasks/tasks.controller';
+import { NotificationGatewayController } from './controllers/notifications/notification.controller';
+import { SseModule } from '@app/common/infrastructure/services/sse/sse.module';
 
 @Module({
-  imports: [],
+  imports: [SseModule],
   controllers: [
     AuthEmployeeController,
     EmployeeAccountController,
@@ -15,6 +17,7 @@ import { TasksGatewayController } from './controllers/tasks/tasks.controller';
     AttendanceGatewayController,
     ProjectsGatewayController,
     TasksGatewayController,
+    NotificationGatewayController,
   ],
 })
 export class ControllerModule {}

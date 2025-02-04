@@ -16,48 +16,50 @@ export class CreateTaskUseCase {
 
   // TODO: Check if task with same name has been created for the department or project
   async createTaskRepository(data: CreateTaskInput): Promise<TasksModel> {
-    const employee = await this.employeeRepository.findOne({
-      where: {
-        id: data.employeeId,
-      },
-    });
+    try {
+      const employee = await this.employeeRepository.findOne({
+        where: {
+          id: data.employeeId,
+        },
+      });
 
-    if (!employee) {
-      throw new NotFoundException('Employee with id not found');
+      if (!employee) {
+        throw new NotFoundException('Employee with id not found');
+      }
+
+      const project = await this.projectRepository.findOne({
+        where: {
+          id: data.projectId,
+        },
+      });
+
+      if (!project) {
+        throw new NotFoundException('Project with id not found');
+      }
+
+      const checkTaskExists = await this.taskRepository.findOne({
+        where: {
+          name: data.name,
+          projectId: data.projectId,
+        },
+      });
+
+      if (checkTaskExists) {
+        throw new ConflictException('Task with name already exists');
+      }
+
+      await this.taskRepository.save(data);
+
+      const returnTask = await this.taskRepository.findOne({
+        where: {
+          name: data.name,
+          projectId: data.projectId,
+        },
+      });
+
+      return returnTask;
+    } catch (error) {
+      throw error;
     }
-
-    const project = await this.projectRepository.findOne({
-      where: {
-        id: data.projectId,
-      },
-    });
-
-    if (!project) {
-      throw new NotFoundException('Project with id not found');
-    }
-
-    const checkTaskExists = await this.taskRepository.findOne({
-      where: {
-        name: data.name,
-        projectId: data.projectId,
-      },
-    });
-
-    if (checkTaskExists) {
-      throw new ConflictException('Task with name already exists');
-    }
-
-    await this.taskRepository.save(data);
-
-    const returnTask = await this.taskRepository.findOne({
-      where: {
-        name: data.name,
-        projectId: data.projectId,
-      },
-    });
-
-    console.log('Task created', returnTask);
-
-    return returnTask;
   }
 }

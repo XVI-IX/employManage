@@ -17,10 +17,12 @@ import { ResetPasswordEmployeeUseCase } from '../../usecase/auth/resetPasswordEm
 import { HttpResponse } from '@app/common/infrastructure/helpers/response.helper';
 import { GetEmployeeUseCase } from '../../usecase/account/getEmployee.usecase';
 import { UpdateEmployeeUseCase } from '../../usecase/account/updateEmployee.usecase';
+import { SseService } from '@app/common/infrastructure/services/sse/sse.service';
 
 @Controller()
 export class EmployeesController {
   constructor(
+    private readonly sseService: SseService,
     @Inject(GeneralUseCaseProxyModule.LOGIN_USE_CASE_PROXY)
     private readonly loginUseCaseProxy: UseCaseProxy<LoginUseCase>,
     @Inject(GeneralUseCaseProxyModule.REGISTER_USE_CASE_PROXY)
@@ -50,6 +52,8 @@ export class EmployeesController {
     const response = await this.loginUseCaseProxy
       .getInstance()
       .loginWithPassword(data.email, data.password);
+
+    this.sseService.registerClient(response.data.id);
 
     return HttpResponse.send('Authentication successful', response);
   }

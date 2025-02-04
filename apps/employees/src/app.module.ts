@@ -8,6 +8,7 @@ import { GeneralUseCaseProxyModule } from './infrastructure/usecase-proxy/genera
 import { DatabaseModule } from '@app/common/infrastructure/services/database/database.module';
 import { EmployeesController } from './infrastructure/controllers/employees.controller';
 import { RepositoriesModule } from './infrastructure/repositories/repositories.module';
+import { SseModule } from '@app/common/infrastructure/services/sse/sse.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { RepositoriesModule } from './infrastructure/repositories/repositories.m
     DatabaseModule,
     RepositoriesModule,
     GeneralUseCaseProxyModule.register(),
+    SseModule,
   ],
   controllers: [EmployeesController],
   providers: [],
