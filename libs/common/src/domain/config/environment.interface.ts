@@ -28,4 +28,7 @@ export interface IEnvironmentInterface {
   getProjectServicePort(): number;
   getTaskServicePort(): number;
   getNotifcationServicePort(): number;
+  getRedisHost(): string;
+  getRedisPort(): number;
+  getRedisPassword(): string;
 }

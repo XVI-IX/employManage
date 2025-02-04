@@ -12,7 +12,7 @@ async function bootstrap() {
         host: envConfig.getMicroServicesHost(),
         port: envConfig.getNotifcationServicePort(),
       },
-      logger: ['error', 'warn'],
+      logger: ['error', 'warn', 'log'],
     },
   );
 

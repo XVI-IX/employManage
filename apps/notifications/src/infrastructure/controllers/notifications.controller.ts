@@ -15,10 +15,12 @@ import {
   UpdateNotificationInput,
 } from '../common/schemas/notifications.schema';
 import { HttpResponse } from '@app/common/infrastructure/helpers/response.helper';
+import { SseService } from '@app/common/infrastructure/services/sse/sse.service';
 
 @Controller()
 export class NotificationsController {
   constructor(
+    private readonly sseService: SseService,
     @Inject(
       NotificationGeneralUseCaseProxyModule.CREATE_NOTIFICATION_USE_CASE_PROXY,
     )
@@ -58,6 +60,10 @@ export class NotificationsController {
     const response = await this.createNotificationUseCaseProxy
       .getInstance()
       .createNotification(data);
+
+    console.log('Notification response', response);
+
+    this.sseService.sendNotification(data.employeeId, response[0]);
 
     return HttpResponse.send('Notification created successfully', response);
   }
@@ -127,6 +133,8 @@ export class NotificationsController {
     const response = await this.updateNotificationUseCaseProxy
       .getInstance()
       .updateNotification(data.notificationId, data);
+
+    this.sseService.sendNotification(response.employeeId, response);
 
     return HttpResponse.send('Notification updated successfully', response);
   }

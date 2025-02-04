@@ -43,7 +43,7 @@ export class LoginUseCase {
 
       return {
         token,
-        ...employee,
+        data: employee,
       };
     } catch (error) {
       throw new BadRequestException('Error logging in employee');

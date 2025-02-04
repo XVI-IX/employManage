@@ -12,6 +12,7 @@ import { AttendanceGatewayController } from './infrastructure/controllers/attend
 import { ProjectsGatewayController } from './infrastructure/controllers/projects/projects.controller';
 import { TasksGatewayController } from './infrastructure/controllers/tasks/tasks.controller';
 import { NotificationGatewayController } from './infrastructure/controllers/notifications/notification.controller';
+import { SseModule } from '@app/common/infrastructure/services/sse/sse.module';
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { NotificationGatewayController } from './infrastructure/controllers/noti
       },
     ]),
     JwtTokenModule,
+    SseModule,
   ],
   controllers: [
     AuthEmployeeController,

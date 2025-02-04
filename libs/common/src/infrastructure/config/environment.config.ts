@@ -107,6 +107,18 @@ class EnvironmentConfig implements IEnvironmentInterface {
   getDatabasePort(): number {
     return env.get('DATABASE_PORT').asInt() || 3306;
   }
+
+  getRedisHost(): string {
+    return env.get('REDIS_HOST').asString();
+  }
+
+  getRedisPort(): number {
+    return env.get('REDIS_PORT').asInt();
+  }
+
+  getRedisPassword(): string {
+    return env.get('REDIS_PASSWORD').asString();
+  }
 }
 
 export const envConfig = new EnvironmentConfig();

@@ -2,7 +2,12 @@ import { Controller, Inject } from '@nestjs/common';
 import { TasksGeneralUsecaseProxyModule } from '../usecase-proxy/tasksGeneral.usecase-proxy.module';
 import { UseCaseProxy } from '@app/common/infrastructure/usecase-proxy/usecase-proxy';
 import { CreateTaskUseCase } from '../../usecases/createTask.usecase';
-import { ClientProxy, MessagePattern, Payload, RpcException } from '@nestjs/microservices';
+import {
+  ClientProxy,
+  MessagePattern,
+  Payload,
+  RpcException,
+} from '@nestjs/microservices';
 import { CreateTaskInput } from '../common/schemas/tasks.schema';
 import { HttpResponse } from '@app/common/infrastructure/helpers/response.helper';
 import { GetAllTasksUseCase } from '../../usecases/getAllTasks.usecase';
@@ -19,7 +24,8 @@ import { GetTasksByStatusUseCase } from '../../usecases/findTasksByStatus.usecas
 @Controller()
 export class TasksController {
   constructor(
-    @Inject('NOTIFICATION_SERVICE') private readonly notificationService: ClientProxy,
+    @Inject('NOTIFICATION_SERVICE')
+    private readonly notificationService: ClientProxy,
     @Inject(TasksGeneralUsecaseProxyModule.CREATE_TASK_USE_CASE_PROXY)
     private readonly createTaskUseCase: UseCaseProxy<CreateTaskUseCase>,
     @Inject(TasksGeneralUsecaseProxyModule.GET_ALL_TASKS_USE_CASE_PROXY)
@@ -54,7 +60,7 @@ export class TasksController {
         .getInstance()
         .createTaskRepository(data);
 
-        this.notificationService.emit('createNotification', task)
+      this.notificationService.emit('createNotification', task);
 
       return HttpResponse.send('Task created', task);
     } catch (error) {
