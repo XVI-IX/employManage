@@ -61,9 +61,7 @@ export class NotificationsController {
       .getInstance()
       .createNotification(data);
 
-    console.log('Notification response', response);
-
-    this.sseService.sendNotification(data.employeeId, response[0]);
+    await this.sseService.sendNotification(data.employeeId, response[0]);
 
     return HttpResponse.send('Notification created successfully', response);
   }

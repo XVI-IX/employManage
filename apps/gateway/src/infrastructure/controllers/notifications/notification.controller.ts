@@ -13,6 +13,7 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { CreateNotificationInput } from 'apps/notifications/src/infrastructure/common/schemas/notifications.schema';
 import { Response } from 'express';
+import { Observable } from 'rxjs';
 
 @Controller('/api/v1/notifications')
 export class NotificationGatewayController {
@@ -24,14 +25,17 @@ export class NotificationGatewayController {
 
   @Get('/sse/:employeeId')
   @Sse()
-  subscribe(@Param('employeeId') employeeId: string, @Res() res: Response) {
+  async subscribe(
+    @Param('employeeId') employeeId: string,
+    @Res() res: Response,
+  ): Promise<Observable<MessageEvent<any>>> {
     res.set({
       'Cache-Control': 'no-cache',
       'Content-Type': 'text/event-stream',
       Connection: 'keep-alive',
     });
 
-    return this.sseService.registerClient(employeeId);
+    return await this.sseService.registerClient(employeeId);
   }
 
   @Post('/')
